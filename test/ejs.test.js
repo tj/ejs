@@ -34,5 +34,9 @@ module.exports = {
         var html = '<p>tj</p>',
             str = '<p><%= this %></p>';
         assert.equal(html, ejs.render(str, { context: 'tj' }));
+    },
+    
+    'test escaping': function(assert){
+        assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
     }
 };
