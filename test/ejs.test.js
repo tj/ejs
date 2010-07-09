@@ -38,5 +38,6 @@ module.exports = {
     
     'test escaping': function(assert){
         assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
+        assert.equal('<script>', ejs.render('<%- "<script>" %>'));
     }
 };
