@@ -11,6 +11,7 @@ Embedded JavaScript templates.
 
   * Complies with the [Express](http://expressjs.com) view system
   * Static caching of intermediate JavaScript
+  * Unbuffered code for conditionals etc `<% code %>`
   * Escapes html by default with `<%= code %>`
   * Unescaped buffering with `<%- code %>`
 
