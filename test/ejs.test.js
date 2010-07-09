@@ -42,7 +42,7 @@ module.exports = {
     },
     
     'test newlines': function(assert){
-        var html = '<p>tj</p>\n<p>tj@sencha.com</p>',
+        var html = '\n<p>tj</p>\n<p>tj@sencha.com</p>',
             str = '<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>',
             locals = { name: 'tj', email: 'tj@sencha.com' };
         assert.equal(html, ejs.render(str, { locals: locals }));
