@@ -39,5 +39,12 @@ module.exports = {
     'test escaping': function(assert){
         assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
         assert.equal('<script>', ejs.render('<%- "<script>" %>'));
+    },
+    
+    'test newlines': function(assert){
+        var html = '<p>tj</p>\n<p>tj@sencha.com</p>',
+            str = '<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>',
+            locals = { name: 'tj', email: 'tj@sencha.com' };
+        assert.equal(html, ejs.render(str, { locals: locals }));
     }
 };
