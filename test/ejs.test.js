@@ -6,6 +6,10 @@
 var ejs = require('ejs');
 
 module.exports = {
+    'test .version': function(assert){
+        assert.ok(/^\d+\.\d+\.\d+$/.test(ejs.version), 'Test .version format');
+    },
+    
     'test html': function(assert){
         assert.equal('<p>yay</p>', ejs.render('<p>yay</p>'));
     },
