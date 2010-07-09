@@ -21,3 +21,12 @@ Embedded JavaScript templates.
 
     ejs.render(str, options);
     // => str
+
+## Options
+
+  - `locals`          Local variables object
+  - `cache`           Compiled functions are cached, requires `filename`
+  - `filename`        Used by `cache` to key caches
+  - `context|scope`   Function execution context
+  - `debug`           Output generated function body
+  
