@@ -22,5 +22,17 @@ module.exports = {
             str = '<% if (name) { %><p><%= name %></p><% } %>',
             locals = { name: 'tj' };
         assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+    
+    'test `scope` option': function(assert){
+        var html = '<p>tj</p>',
+            str = '<p><%= this %></p>';
+        assert.equal(html, ejs.render(str, { scope: 'tj' }));
+    },
+    
+    'test `context` option': function(assert){
+        var html = '<p>tj</p>',
+            str = '<p><%= this %></p>';
+        assert.equal(html, ejs.render(str, { context: 'tj' }));
     }
 };
