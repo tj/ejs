@@ -50,5 +50,12 @@ module.exports = {
             str = '<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>',
             locals = { name: 'tj', email: 'tj@sencha.com' };
         assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+    
+    'test single quotes': function(assert){
+        var html = '<p>WAHOO</p>',
+            str = '<p><%= up(\'wahoo\') %></p>',
+            locals = { up: function(str){ return str.toUpperCase(); }};
+        assert.equal(html, ejs.render(str, { locals: locals, debug: true }));
     }
 };
