@@ -15,6 +15,12 @@ Embedded JavaScript templates.
   * Escapes html by default with `<%= code %>`
   * Unescaped buffering with `<%- code %>`
 
+## Example
+
+    <% if (user) { %>
+	  <h2><%= user.name %></h2>
+    <% } %>
+
 ## Usage
 
     ejs.compile(str, options);
