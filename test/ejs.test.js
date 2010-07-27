@@ -56,6 +56,6 @@ module.exports = {
         var html = '<p>WAHOO</p>',
             str = '<p><%= up(\'wahoo\') %></p>',
             locals = { up: function(str){ return str.toUpperCase(); }};
-        assert.equal(html, ejs.render(str, { locals: locals, debug: true }));
+        assert.equal(html, ejs.render(str, { locals: locals }));
     }
 };
