@@ -63,8 +63,7 @@ module.exports = {
         var html = "<p>couldn't shouldn't can't</p>",
             str = "<p>couldn't shouldn't can't</p>";
         assert.equal(html, ejs.render(str));
-    }
-    ,
+    },
 
     'test single quotes inside tags': function(assert) {
         var html = '<p>string</p>',
@@ -76,6 +75,18 @@ module.exports = {
         var html = "<p>can't</p>",
             str = "<p>can\\'t</p>";
         assert.equal(html, ejs.render(str));
+    },
+    
+    'test double quotes': function(assert){
+        var html = '<p>WAHOO</p>',
+            str = '<p><%= up("wahoo") %></p>',
+            locals = { up: function(str){ return str.toUpperCase(); }};
+        assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+    
+    'test multiple double quotes': function(assert) {
+        var html = '<p>just a "test" wahoo</p>',
+            str = '<p>just a "test" wahoo</p>';
+        assert.equal(html, ejs.render(str));
     }
-
 };
