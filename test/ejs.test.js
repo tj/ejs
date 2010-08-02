@@ -70,5 +70,12 @@ module.exports = {
         var html = '<p>string</p>',
             str = '<p><%= \'string\' %></p>';
         assert.equal(html, ejs.render(str));
+    },
+
+    'test already-escaped single quotes in the document': function(assert) {
+        var html = "<p>can't</p>",
+            str = "<p>can\\'t</p>";
+        assert.equal(html, ejs.render(str));
     }
+
 };
