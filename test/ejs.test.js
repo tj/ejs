@@ -64,4 +64,11 @@ module.exports = {
             str = '<p>couldn\'t shouldn\'t can\'t</p>';
         assert.equal(html, ejs.render(str));
     }
+    ,
+
+    'test single quotes inside tags': function(assert) {
+        var html = '<p>string</p>',
+            str = '<p><%= \'string\' %></p>';
+        assert.equal(html, ejs.render(str));
+    }
 };
