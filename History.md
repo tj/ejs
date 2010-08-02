@@ -1,4 +1,10 @@
 
+0.0.4 / 2010-08-02
+==================
+
+  * Fixed single quotes for content outside of template tags. [aniero]
+  * Changed; `exports.compile()` now expects only "locals"
+
 0.0.3 / 2010-07-15
 ==================
 
