@@ -57,5 +57,11 @@ module.exports = {
             str = '<p><%= up(\'wahoo\') %></p>',
             locals = { up: function(str){ return str.toUpperCase(); }};
         assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+
+    'test multiple single quotes': function(assert) {
+        var html = '<p>couldn\'t shouldn\'t can\'t</p>',
+            str = '<p>couldn\'t shouldn\'t can\'t</p>';
+        assert.equal(html, ejs.render(str));
     }
 };
