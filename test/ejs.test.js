@@ -54,7 +54,7 @@ module.exports = {
     
     'test single quotes': function(assert){
         var html = '<p>WAHOO</p>',
-            str = '<p><%= up(\'wahoo\') %></p>',
+            str = "<p><%= up('wahoo') %></p>",
             locals = { up: function(str){ return str.toUpperCase(); }};
         assert.equal(html, ejs.render(str, { locals: locals }));
     },
@@ -64,5 +64,36 @@ module.exports = {
             str = '<p><%= up(\'wahoo\') %> that\'s cool</p>',
             locals = { up: function(str){ return str.toUpperCase(); }};
         assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+
+    'test multiple single quotes': function(assert) {
+        var html = "<p>couldn't shouldn't can't</p>",
+            str = "<p>couldn't shouldn't can't</p>";
+        assert.equal(html, ejs.render(str));
+    },
+
+    'test single quotes inside tags': function(assert) {
+        var html = '<p>string</p>',
+            str = "<p><%= 'string' %></p>";
+        assert.equal(html, ejs.render(str));
+    },
+
+    'test back-slashes in the document': function(assert) {
+        var html = "<p>backslash: '\\'</p>",
+            str = "<p>backslash: '\\'</p>";
+        assert.equal(html, ejs.render(str));
+    },
+    
+    'test double quotes': function(assert){
+        var html = '<p>WAHOO</p>',
+            str = '<p><%= up("wahoo") %></p>',
+            locals = { up: function(str){ return str.toUpperCase(); }};
+        assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+    
+    'test multiple double quotes': function(assert) {
+        var html = '<p>just a "test" wahoo</p>',
+            str = '<p>just a "test" wahoo</p>';
+        assert.equal(html, ejs.render(str));
     }
 };
