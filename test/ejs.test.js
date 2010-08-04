@@ -59,6 +59,13 @@ module.exports = {
         assert.equal(html, ejs.render(str, { locals: locals }));
     },
 
+    'test single quotes in the html': function(assert){
+        var html = '<p>WAHOO that\'s cool</p>',
+            str = '<p><%= up(\'wahoo\') %> that\'s cool</p>',
+            locals = { up: function(str){ return str.toUpperCase(); }};
+        assert.equal(html, ejs.render(str, { locals: locals }));
+    },
+
     'test multiple single quotes': function(assert) {
         var html = "<p>couldn't shouldn't can't</p>",
             str = "<p>couldn't shouldn't can't</p>";
@@ -71,9 +78,9 @@ module.exports = {
         assert.equal(html, ejs.render(str));
     },
 
-    'test already-escaped single quotes in the document': function(assert) {
-        var html = "<p>can't</p>",
-            str = "<p>can\\'t</p>";
+    'test back-slashes in the document': function(assert) {
+        var html = "<p>backslash: '\\'</p>",
+            str = "<p>backslash: '\\'</p>";
         assert.equal(html, ejs.render(str));
     },
     
