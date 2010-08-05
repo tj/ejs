@@ -105,5 +105,23 @@ module.exports = {
         var html = '<p>foo</p>',
             str = '<p><%=bar%></p>';
         assert.equal(html, ejs.render(str, { locals: { bar: 'foo' }}));
+    },
+    
+    'test custom tags': function(assert){
+        var html = '<p>foo</p>',
+            str = '<p>{{= "foo" }}</p>';
+
+        assert.equal(html, ejs.render(str, {
+            open: '{{',
+            close: '}}'
+        }));
+
+        var html = '<p>foo</p>',
+            str = '<p><?= "foo" ></p>';
+
+        assert.equal(html, ejs.render(str, {
+            open: '<?',
+            close: '>'
+        }));
     }
 };

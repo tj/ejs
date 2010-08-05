@@ -14,6 +14,7 @@ Embedded JavaScript templates.
   * Unbuffered code for conditionals etc `<% code %>`
   * Escapes html by default with `<%= code %>`
   * Unescaped buffering with `<%- code %>`
+  * Supports tag customization
 
 ## Example
 
@@ -36,4 +37,6 @@ Embedded JavaScript templates.
   - `filename`        Used by `cache` to key caches
   - `context|scope`   Function execution context
   - `debug`           Output generated function body
+  - `open`            Open tag, defaulting to "<%"
+  - `close`           Closing tag, defaulting to "%>"
   
