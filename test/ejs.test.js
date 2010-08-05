@@ -145,5 +145,15 @@ module.exports = {
                 items: ['foo']
             }
         }));
+        
+        var html = '<p>foo</p>',
+            str = '<% items.forEach(function(item){ %>'
+                + '<p><%= item %></p>'
+                + '<% }) %>';
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                items: ['foo']
+            }
+        }));
     }
 };
