@@ -131,5 +131,19 @@ module.exports = {
         ejs.open = '{{';
         ejs.close = '}}';
         assert.equal(html, ejs.render(str));
+        delete ejs.open;
+        delete ejs.close;
+    },
+    
+    'test iteration': function(assert){
+        var html = '<p>foo</p>',
+            str = '<% for (var key in items) { %>'
+                + '<p><%= items[key] %></p>'
+                + '<% } %>';
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                items: ['foo']
+            }
+        }));
     }
 };
