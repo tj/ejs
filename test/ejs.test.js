@@ -99,7 +99,7 @@ module.exports = {
     
     'test whitespace': function(assert){
         var html = '<p>foo</p>',
-            str = '<p><%"foo"%></p>';
+            str = '<p><%="foo"%></p>';
         assert.equal(html, ejs.render(str));
 
         var html = '<p>foo</p>',
