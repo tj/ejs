@@ -39,4 +39,15 @@ Embedded JavaScript templates.
   - `debug`           Output generated function body
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
-  
+
+## Custom Tags
+
+Custom tags can also be applied globally:
+
+    var ejs = require('ejs');
+    ejs.open = '{{';
+    ejs.close = '}}';
+
+Which would make the following a valid template:
+
+    <h1>{{= title }}</h1>

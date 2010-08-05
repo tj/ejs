@@ -117,11 +117,19 @@ module.exports = {
         }));
 
         var html = '<p>foo</p>',
-            str = '<p><?= "foo" ></p>';
+            str = '<p><?= "foo" ?></p>';
 
         assert.equal(html, ejs.render(str, {
             open: '<?',
-            close: '>'
+            close: '?>'
         }));
+    },
+    
+    'test global custom tags': function(assert){
+        var html = '<p>foo</p>',
+            str = '<p>{{= "foo" }}</p>';
+        ejs.open = '{{';
+        ejs.close = '}}';
+        assert.equal(html, ejs.render(str));
     }
 };
