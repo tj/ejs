@@ -1,4 +1,11 @@
 
+0.2.0 / 2010-08-05 
+==================
+
+  * Added support for global tag config
+  * Added custom tag support. Closes #5
+  * Fixed whitespace bug. Closes #4
+
 0.1.0 / 2010-08-04
 ==================
 
