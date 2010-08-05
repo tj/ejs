@@ -95,5 +95,15 @@ module.exports = {
         var html = '<p>just a "test" wahoo</p>',
             str = '<p>just a "test" wahoo</p>';
         assert.equal(html, ejs.render(str));
+    },
+    
+    'test whitespace': function(assert){
+        var html = '<p>foo</p>',
+            str = '<p><%"foo"%></p>';
+        assert.equal(html, ejs.render(str));
+
+        var html = '<p>foo</p>',
+            str = '<p><%=bar%></p>';
+        assert.equal(html, ejs.render(str, { locals: { bar: 'foo' }}));
     }
 };
