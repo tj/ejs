@@ -124,6 +124,24 @@ module.exports = {
             close: '?>'
         }));
     },
+
+    'test custom tags over 2 chars': function(assert){
+        var html = '<p>foo</p>',
+            str = '<p>{{{{= "foo" }>>}</p>';
+
+        assert.equal(html, ejs.render(str, {
+            open: '{{{{',
+            close: '}>>}'
+        }));
+
+        var html = '<p>foo</p>',
+            str = '<p><??= "foo" ??></p>';
+
+        assert.equal(html, ejs.render(str, {
+            open: '<??',
+            close: '??>'
+        }));
+    },
     
     'test global custom tags': function(assert){
         var html = '<p>foo</p>',
