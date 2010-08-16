@@ -173,5 +173,15 @@ module.exports = {
                 items: ['foo']
             }
         }));
+    },
+    
+    'test filter support': function(assert){
+        var html = '<p>Oof</p>',
+            str = '{{: items | first | reverse | capitalize }}';
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                items: ['foo', 'bar']
+            }
+        }));
     }
 };
