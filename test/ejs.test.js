@@ -181,7 +181,8 @@ module.exports = {
         assert.equal(html, ejs.render(str, {
             locals: {
                 items: ['foo', 'bar']
-            }
+            },
+            debug: true
         }));
     }
 };
