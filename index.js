@@ -1,1 +1,2 @@
-lib/ejs.js
+
+module.exports = require('./lib/ejs');
