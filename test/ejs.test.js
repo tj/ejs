@@ -183,5 +183,18 @@ module.exports = {
                 items: ['foo', 'bar', 'baz']
             }
         }));
+    },
+    
+    'test filter argument support': function(assert){
+        var html = 'tj, guillermo',
+            str = '<%=: users | map:"name" | join:", " %>';
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                users: [
+                    { name: 'tj' },
+                    { name: 'guillermo' }
+                ]
+            }
+        }));
     }
 };
