@@ -62,11 +62,11 @@ Filters can be applied by supplying the _:_ modifier, so for example if we wish 
 
 Template:
 
-  <p><%=: users | map:'name' | join %></p>
+    <p><%=: users | map:'name' | join %></p>
 
 Output:
 
-  <p>Tj, Mape, Guillermo</p>
+    <p>Tj, Mape, Guillermo</p>
 
 Render call:
 
@@ -82,7 +82,7 @@ Render call:
 
 Or perhaps capitalize the first user's name for display:
 
-  <p><%=: users | first | capitalize %></p>
+    <p><%=: users | first | capitalize %></p>
 
 ## Filter List
 
