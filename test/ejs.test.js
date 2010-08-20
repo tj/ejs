@@ -176,13 +176,12 @@ module.exports = {
     },
     
     'test filter support': function(assert){
-        var html = '<p>Oof</p>',
-            str = '{{: items | first | reverse | capitalize }}';
+        var html = 'Zab',
+            str = '<%=: items | reverse | first | reverse | capitalize %>';
         assert.equal(html, ejs.render(str, {
             locals: {
-                items: ['foo', 'bar']
-            },
-            debug: true
+                items: ['foo', 'bar', 'baz']
+            }
         }));
     }
 };
