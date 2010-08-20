@@ -200,7 +200,7 @@ module.exports = {
     
     'test filter js': function(assert){
         var html = 'tj',
-            str = '<%=: [users[0]] | map:\'name\' | first %>';
+            str = '<%=: [users[0]] | first | get:"name" %>';
         assert.equal(html, ejs.render(str, {
             locals: {
                 users: [
