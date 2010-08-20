@@ -198,6 +198,19 @@ module.exports = {
         }));
     },
     
+    'test filter js': function(assert){
+        var html = 'tj',
+            str = '<%=: [users[0]] | map:\'name\' | first %>';
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                users: [
+                    { name: 'tj' },
+                    { name: 'guillermo' }
+                ]
+            }
+        }));
+    },
+    
     'test custom filters': function(assert){
         var html = 'Welcome Tj Holowaychuk',
             str = '<%=: users | first | greeting %>';
