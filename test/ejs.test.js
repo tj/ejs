@@ -198,14 +198,15 @@ module.exports = {
         }));
     },
     
-    'test filter js': function(assert){
+    'test sort_by filter': function(assert){
         var html = 'tj',
-            str = '<%=: [users[0]] | first | get:"name" %>';
+            str = '<%=: users | sort_by:"name" | last | get:"name" %>';
         assert.equal(html, ejs.render(str, {
             locals: {
                 users: [
+                    { name: 'guillermo' },
                     { name: 'tj' },
-                    { name: 'guillermo' }
+                    { name: 'mape' }
                 ]
             }
         }));

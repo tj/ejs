@@ -93,6 +93,7 @@ Currently these filters are available:
   - downcase
   - upcase
   - sort
+  - sort_by:'prop'
   - size
   - length
   - plus:n
