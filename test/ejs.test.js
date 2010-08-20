@@ -196,5 +196,22 @@ module.exports = {
                 ]
             }
         }));
+    },
+    
+    'test custom filters': function(assert){
+        var html = 'Welcome Tj Holowaychuk',
+            str = '<%=: users | first | greeting %>';
+
+        ejs.filters.greeting = function(user){
+            return 'Welcome ' + user.first + ' ' + user.last + '';
+        };
+
+        assert.equal(html, ejs.render(str, {
+            locals: {
+                users: [
+                    { first: 'Tj', last: 'Holowaychuk' }
+                ]
+            }
+        }));
     }
 };
