@@ -83,6 +83,32 @@ Or perhaps capitalize the first user's name for display:
 
   <p><%=: users | first | capitalize %></p>
 
+## Filter List
+
+Currently these filters are available:
+
+  - first
+  - last
+  - capitalize
+  - downcase
+  - upcase
+  - sort
+  - size
+  - length
+  - plus:n
+  - minus:n
+  - times:n
+  - divided_by:n
+  - join:'val'
+  - truncate:n
+  - truncate_words:n
+  - replace:pattern,substitution
+  - prepend:val
+  - append:val
+  - map:'prop'
+  - reverse
+  - get:'prop'
+
 ## License 
 
 (The MIT License)
