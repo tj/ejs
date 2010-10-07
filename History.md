@@ -1,4 +1,10 @@
 
+0.2.1 / 2010-10-07 
+==================
+
+  * Added filter support
+  * Fixed _cache_ option. ~4x performance increase
+
 0.2.0 / 2010-08-05 
 ==================
 
