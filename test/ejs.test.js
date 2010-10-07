@@ -34,12 +34,6 @@ module.exports = {
         assert.equal(html, ejs.render(str, { scope: 'tj' }));
     },
     
-    'test `context` option': function(assert){
-        var html = '<p>tj</p>',
-            str = '<p><%= this %></p>';
-        assert.equal(html, ejs.render(str, { context: 'tj' }));
-    },
-    
     'test escaping': function(assert){
         assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
         assert.equal('<script>', ejs.render('<%- "<script>" %>'));

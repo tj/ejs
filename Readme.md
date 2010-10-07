@@ -36,7 +36,7 @@ Embedded JavaScript templates.
   - `locals`          Local variables object
   - `cache`           Compiled functions are cached, requires `filename`
   - `filename`        Used by `cache` to key caches
-  - `context|scope`   Function execution context
+  - `scope`           Function execution context
   - `debug`           Output generated function body
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
