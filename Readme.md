@@ -111,6 +111,55 @@ Currently these filters are available:
   - reverse
   - get:'prop'
 
+## Partial (`%RENDER` and `%COMPILE()` usage)
+
+Partial rendering allow reuse some part of the template. See this example:
+
+Template:
+    <%- link_to( url, %RENDER%>
+        <span class="mylink"><%= linkTxt %></span>
+    <%END ) %>
+
+Result:
+    <a href="domain.org/some/path">
+        <span class="mylink">some link text here!</span>
+    </a>
+
+`%RENDER` must be placed at the end of the js block and it will return a string
+related to the result of the template partial block ended by `END`. The `END`
+must be on the start of the js block.
+
+Compile allows great things! See this example:
+
+Template:
+    <%- saveForm( userObj, %COMPILE(usrForm)%>
+        <ul>
+            <li> Name:   <%- usrForm.textField("fullName") %> </li>
+            <li> e-mail: <%- usrForm.textField("email")    %> </li>
+            <li> Birth:  <%- usrForm.dateField("birth")    %> </li>
+        </ul>
+        usrForm.submit('Update');
+    <%END ) %>
+
+Result:
+    <form action="/save/id:123">
+        <script type="text/javascript">
+            function openCal(input) { ... }
+        </script>
+        <ul>
+            <li> Name:   <input name="fullName"
+                         value="Obi-Wan Kenobi"/> </li>
+            <li> e-mail: <input name="email"
+                         value="kenobi@jedicouncil.wars"/> </li>
+            <li> Birth:  <input name="birth"
+                         value="13/09/678654" onclick="openCal(this)"/> </li>
+        </ul>
+        <input type="submit" value="Update"/>
+    </form>
+
+`%COMPILE(...)` works like `%RENDER`, but returns a function and accept any
+parameter list to be used on the compiled partial.
+
 ## License 
 
 (The MIT License)
