@@ -1,4 +1,10 @@
 
+0.3.0 / 2011-02-14 
+==================
+
+  * Added 'json' filter [Yuriy Bogdanov]
+  * Use exported version of parse function to allow monkey-patching [Anatoliy Chakkaev]
+
 0.2.1 / 2010-10-07 
 ==================
 
