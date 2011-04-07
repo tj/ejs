@@ -221,16 +221,5 @@ module.exports = {
                 ]
             }
         }));
-    },
-
-    'test new line suppression': function(assert){
-        var html = "Foo\nBar\r\nBaz",
-            expectedHtml = "FooBarBaz",
-            str = "<%= html -%>";
-        assert.equal(expectedHtml, ejs.render(str, {
-            locals: {
-                html: html
-            }
-        }));
     }
 };
