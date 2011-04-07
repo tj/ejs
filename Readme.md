@@ -14,6 +14,7 @@ Embedded JavaScript templates.
   * Unbuffered code for conditionals etc `<% code %>`
   * Escapes html by default with `<%= code %>`
   * Unescaped buffering with `<%- code %>`
+  * Newline suppression with `<%= code -%>`
   * Supports tag customization
   * Filter support for designer-friendly templates
 
