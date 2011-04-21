@@ -1,4 +1,9 @@
 
+0.4.0 / 2011-04-21 
+==================
+
+  * Added; ported jade's error reporting to ejs. [slaskis]
+
 0.3.1 / 2011-02-23 
 ==================
 
