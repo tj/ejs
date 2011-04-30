@@ -22,6 +22,12 @@ Embedded JavaScript templates.
     <% if (user) { %>
 	    <h2><%= user.name %></h2>
     <% } %>
+    
+    // High speed mode: options.it = true;
+    
+    <% if (it.user) { %>
+        <h2><%= it.user.name %></h2>
+    <% } %>
 
 ## Usage
 
@@ -40,6 +46,7 @@ Embedded JavaScript templates.
   - `debug`           Output generated function body
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
+  - `it`              High performance render option, if it is true, will be _100%_ speed up; false by default
 
 ## Custom Tags
 
@@ -110,6 +117,18 @@ Currently these filters are available:
   - map:'prop'
   - reverse
   - get:'prop'
+
+## High Speed mode: ejs.it = true;
+
+If you set option `it` to true, there will be 100% render speed up:
+
+    var ejs = require('ejs');
+    // global settings
+    ejs.it = true;
+
+You must use `it.var_name` to access your template locals variables:
+
+    <h1><%= it.title %></h1>
 
 ## License 
 
