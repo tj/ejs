@@ -13,13 +13,14 @@ while (times--) {
 
 console.log('took ' + (new Date - start) + 'ms');
 
+ejs.it = true;
 var str_it = '<% if (it.foo) { %><p><%= it.foo %></p><% } %>';
 times = 50000;
 console.log('options.it true: rendering ' + times + ' times');
 
 var start = new Date;
 while (times--) {
-    ejs.render(str_it, { it: true, cache: true, filename: 'test_it_true', locals: { foo: 'bar' }});
+    ejs.render(str_it, { cache: true, filename: 'test_it_true', locals: { foo: 'bar' }});
 }
 
 console.log('took ' + (new Date - start) + 'ms');
