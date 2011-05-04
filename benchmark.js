@@ -2,7 +2,7 @@
 
 var ejs = require('./lib/ejs'),
     str = '<% if (foo) { %><p><%= foo %></p><% } %>',
-    times = 50000;
+    times = 100000;
 
 console.log('rendering ' + times + ' times');
 
@@ -15,7 +15,7 @@ console.log('took ' + (new Date - start) + 'ms');
 
 ejs.it = true;
 var str_it = '<% if (it.foo) { %><p><%= it.foo %></p><% } %>';
-times = 50000;
+times = 100000;
 console.log('options.it true: rendering ' + times + ' times');
 
 var start = new Date;
