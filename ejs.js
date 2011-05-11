@@ -64,7 +64,7 @@ var utils = require('./utils');
  * Library version.
  */
 
-exports.version = '0.4.1';
+exports.version = '0.4.2';
 
 /**
  * Filters.
