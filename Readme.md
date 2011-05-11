@@ -16,6 +16,7 @@ Embedded JavaScript templates.
   * Unescaped buffering with `<%- code %>`
   * Supports tag customization
   * Filter support for designer-friendly templates
+  * Client-side support
 
 ## Example
 
@@ -110,6 +111,10 @@ Currently these filters are available:
   - map:'prop'
   - reverse
   - get:'prop'
+
+## client-side support
+
+  include `./ejs.js` or `./ejs.min.js` and `require("ejs").compile(str)`.
 
 ## License 
 
