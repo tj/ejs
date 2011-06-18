@@ -190,6 +190,11 @@ var parse = exports.parse = function(str, options){
       var start = i;
       var end = str.indexOf(close, i);
       var js = str.substring(i, end);
+      var n = 0;
+      while ((n = js.indexOf("\n", n)) > -1) {
+        n++;
+        lineno++;
+      }
       if (js[0] == ':') js = filtered(js);
       buf.push(prefix, js, postfix);
       i += end - start + close.length - 1;

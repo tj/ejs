@@ -241,5 +241,28 @@ module.exports = {
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
       assert.eql(lineno,3,"Error should been thrown on line 3, was thrown on line "+lineno);
     }
+  },
+  
+  'test useful stack traces multiline': function(assert){  
+    var str = [
+      "A little somethin'",
+      "somethin'",
+      "<% var some = 'pretty';",
+      "   var multiline = 'javascript';",
+      "%>",
+      "<% if (name) { %>", // Failing line 
+      "  <p><%= name %></p>",
+      "  <p><%= email %></p>",
+      "<% } %>"
+    ].join("\n");
+    
+    try {
+      ejs.render(str)
+    } catch( err ){
+      assert.includes(err.message,"name is not defined");
+      assert.eql(err.name,"ReferenceError");
+      var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
+      assert.eql(lineno,6,"Error should been thrown on line 3, was thrown on line "+lineno);
+    }
   }
 };
