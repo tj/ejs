@@ -1,4 +1,30 @@
 
+0.4.2 / 2011-05-11 
+==================
+
+  * Added client side support
+
+0.4.1 / 2011-04-21 
+==================
+
+  * Fixed error context
+
+0.4.0 / 2011-04-21 
+==================
+
+  * Added; ported jade's error reporting to ejs. [slaskis]
+
+0.3.1 / 2011-02-23 
+==================
+
+  * Fixed optional `compile()` options
+
+0.3.0 / 2011-02-14 
+==================
+
+  * Added 'json' filter [Yuriy Bogdanov]
+  * Use exported version of parse function to allow monkey-patching [Anatoliy Chakkaev]
+
 0.2.1 / 2010-10-07 
 ==================
 
