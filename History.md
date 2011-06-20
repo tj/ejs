@@ -1,4 +1,9 @@
 
+0.4.3 / 2011-06-20 
+==================
+
+  * Fixed stacktraces line number when used multiline js expressions [Octave]
+
 0.4.2 / 2011-05-11 
 ==================
 
