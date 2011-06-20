@@ -262,7 +262,7 @@ module.exports = {
       assert.includes(err.message,"name is not defined");
       assert.eql(err.name,"ReferenceError");
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
-      assert.eql(lineno,6,"Error should been thrown on line 3, was thrown on line "+lineno);
+      assert.eql(lineno,6,"Error should been thrown on line 6, was thrown on line "+lineno);
     }
   }
 };
