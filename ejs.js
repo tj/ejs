@@ -1,6 +1,8 @@
 
 // CommonJS require()
 
+if (typeof require == "undefined") {
+
 function require(p){
     var path = require.resolve(p)
       , mod = require.modules[path];
@@ -45,6 +47,8 @@ require.relative = function (parent) {
     };
   };
 
+}
+
 
 require.register("ejs.js", function(module, exports, require){
 
@@ -64,7 +68,7 @@ var utils = require('./utils');
  * Library version.
  */
 
-exports.version = '0.4.2';
+exports.version = '0.4.3';
 
 /**
  * Filters.
@@ -187,14 +191,12 @@ var parse = exports.parse = function(str, options){
           postfix = "; buf.push('";
       }
 
-      var start = i;
-      var end = str.indexOf(close, i);
-      var js = str.substring(i, end);
-      var n = 0;
-      while ((n = js.indexOf("\n", n)) > -1) {
-        n++;
-        lineno++;
-      }
+      var end = str.indexOf(close, i)
+        , js = str.substring(i, end)
+        , start = i
+        , n = 0;
+
+      while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js[0] == ':') js = filtered(js);
       buf.push(prefix, js, postfix);
       i += end - start + close.length - 1;
