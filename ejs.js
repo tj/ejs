@@ -3,7 +3,7 @@
 
 if (typeof require == "undefined") {
 
-function require(p){
+var require = function(p){
     var path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');
