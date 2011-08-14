@@ -11,6 +11,7 @@ ejs.min.js: ejs.js
 	@uglifyjs $(UGLIFY_FLAGS) $< > $@ \
 		&& du ejs.min.js \
 		&& du ejs.js
+	@echo \; >>ejs.min.js
 
 clean:
 	rm -f ejs.js
