@@ -147,7 +147,7 @@ var browser = {
 
   relative: function(parent) {
     return function(p){
-      if ('.' != p[0]) return require(p);
+      if ('.' != p.substr(0, 1)) return require(p);
       
       var path = parent.split('/')
         , segs = p.split('/');
