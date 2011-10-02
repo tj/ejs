@@ -42,7 +42,7 @@ Embedded JavaScript templates.
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
 
-## Custom Tags
+## Custom tags
 
 Custom tags can also be applied globally:
 
@@ -85,7 +85,7 @@ Or perhaps capitalize the first user's name for display:
 
     <p><%=: users | first | capitalize %></p>
 
-## Filter List
+## Filter list
 
 Currently these filters are available:
 
@@ -111,6 +111,16 @@ Currently these filters are available:
   - map:'prop'
   - reverse
   - get:'prop'
+
+## Adding filters
+
+ To add a filter simply add a method to the `.filters` object:
+ 
+```js
+ejs.filters.last = function(obj) {
+  return obj[obj.length - 1];
+};
+```
 
 ## client-side support
 
