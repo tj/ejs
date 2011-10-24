@@ -1,8 +1,9 @@
+
 SRC = $(shell find lib -name "*.js" -type f)
 UGLIFY_FLAGS = --no-mangle 
 
 test:
-	@./support/expresso/bin/expresso -I lib test/*.test.js
+	@./node_modules/.bin/expresso test/*.test.js
 
 ejs.js: $(SRC)
 	@node support/compile.js $^
