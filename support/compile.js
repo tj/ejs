@@ -89,11 +89,14 @@ function parseConditionals(js) {
 function compile() {
   var buf = '';
   buf += '\n// CommonJS require()\n\n';
+  buf += 'if (typeof require == "undefined") {\n\n';
   buf += browser.require + '\n\n';
+  buf = buf.replace('function require', 'var require = function');
   buf += 'require.modules = {};\n\n';
   buf += 'require.resolve = ' + browser.resolve + ';\n\n';
   buf += 'require.register = ' + browser.register + ';\n\n';
   buf += 'require.relative = ' + browser.relative + ';\n\n';
+  buf += '}\n\n';
   args.forEach(function(file){
     var js = files[file];
     file = file.replace('lib/', '');
