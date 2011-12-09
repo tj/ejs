@@ -64,7 +64,7 @@ var utils = require('./utils');
  * Library version.
  */
 
-exports.version = '0.4.4';
+exports.version = '0.5.0';
 
 /**
  * Filters.
@@ -272,6 +272,7 @@ var compile = exports.compile = function(str, options){
 exports.render = function(str, options){
   var fn
     , options = options || {};
+
   if (options.cache) {
     if (options.filename) {
       fn = cache[options.filename] || (cache[options.filename] = compile(str, options));
@@ -281,8 +282,43 @@ exports.render = function(str, options){
   } else {
     fn = compile(str, options);
   }
-  return fn.call(options.scope, options.locals || {});
+
+  options.__proto__ = options.locals;
+  return fn.call(options.scope, options);
 };
+
+/**
+ * Render an EJS file at the given `path` and callback `fn(err, str)`.
+ *
+ * @param {String} path
+ * @param {Object|Function} options or callback
+ * @param {Function} fn
+ * @api public
+ */
+
+exports.renderFile = function(path, options, fn){
+  var key = path + ':string';
+
+  if ('function' == typeof options) {
+    fn = options, options = {};
+  }
+
+  options.filename = path;
+
+  try {
+    var str = options.cache
+      ? exports.cache[key] || (exports.cache[key] = fs.readFileSync(path, 'utf8'))
+      : fs.readFileSync(path, 'utf8');
+
+    fn(null, exports.render(str, options));
+  } catch (err) {
+    fn(err);
+  }
+};
+
+// express support
+
+exports.__express = exports.renderFile;
 
 /**
  * Expose to require().
@@ -292,7 +328,7 @@ if (require.extensions) {
   require.extensions['.ejs'] = function(module, filename) {
     source = require('fs').readFileSync(filename, 'utf-8');
     module._compile(compile(source, {}), filename);
-   };
+  };
 } else if (require.registerExtension) {
   require.registerExtension('.ejs', function(src) {
     return compile(src, {});

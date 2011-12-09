@@ -34,13 +34,13 @@ Embedded JavaScript templates.
 
 ## Options
 
-  - `locals`          Local variables object
   - `cache`           Compiled functions are cached, requires `filename`
   - `filename`        Used by `cache` to key caches
   - `scope`           Function execution context
   - `debug`           Output generated function body
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
+  - *                 All others are template-local variables
 
 ## Custom tags
 
@@ -72,13 +72,11 @@ Output:
 Render call:
 
     ejs.render(str, {
-        locals: {
-            users: [
-                { name: 'tj' },
-                { name: 'mape' },
-                { name: 'guillermo' }
-            ]
-        }
+        users: [
+          { name: 'tj' },
+          { name: 'mape' },
+          { name: 'guillermo' }
+        ]
     });
 
 Or perhaps capitalize the first user's name for display:
