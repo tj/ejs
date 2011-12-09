@@ -1,4 +1,12 @@
 
+0.5.0 / 2011-11-20 
+==================
+
+  * Added express 3.x support
+  * Added ejs.renderFile()
+  * Added 'json' filter
+  * Fixed tests for 0.5.x
+
 0.4.3 / 2011-06-20 
 ==================
 
