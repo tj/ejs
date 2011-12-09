@@ -236,11 +236,11 @@ module.exports = {
     
     try {
       ejs.render(str)
-    } catch( err ){
-      assert.includes(err.message,"name is not defined");
-      assert.eql(err.name,"ReferenceError");
+    } catch (err) {
+      assert.ok(~err.message.indexOf("name is not defined"));
+      assert.deepEqual(err.name, "ReferenceError");
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
-      assert.eql(lineno,3,"Error should been thrown on line 3, was thrown on line "+lineno);
+      assert.deepEqual(lineno,3, "Error should been thrown on line 3, was thrown on line "+lineno);
     }
   },
   
@@ -259,11 +259,11 @@ module.exports = {
     
     try {
       ejs.render(str)
-    } catch( err ){
-      assert.includes(err.message,"name is not defined");
-      assert.eql(err.name,"ReferenceError");
+    } catch (err) {
+      assert.ok(~err.message.indexOf("name is not defined"));
+      assert.deepEqual(err.name, "ReferenceError");
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
-      assert.eql(lineno,6,"Error should been thrown on line 3, was thrown on line "+lineno);
+      assert.deepEqual(lineno, 6, "Error should been thrown on line 3, was thrown on line "+lineno);
     }
   }
 };

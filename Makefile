@@ -3,7 +3,8 @@ SRC = $(shell find lib -name "*.js" -type f)
 UGLIFY_FLAGS = --no-mangle 
 
 test:
-	@./node_modules/.bin/expresso test/*.test.js
+	@./node_modules/.bin/mocha \
+		--ui exports
 
 ejs.js: $(SRC)
 	@node support/compile.js $^
