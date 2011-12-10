@@ -14,6 +14,17 @@ module.exports = {
   'test html': function(){
     assert.equal('<p>yay</p>', ejs.render('<p>yay</p>'));
   },
+
+  'test renderFile': function(){
+    var html = '<h1>tj</h1>',
+      str = '<p><%= name %></p>',
+      options = { name: 'tj', open: '{', close: '}' };
+
+    ejs.renderFile(__dirname + '/fixtures/user.ejs', options, function(err, res){
+      assert.ok(!err);
+      assert.equal(res, html);
+    })
+  },
   
   'test buffered code': function(){
     var html = '<p>tj</p>',
