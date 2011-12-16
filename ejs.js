@@ -2,6 +2,7 @@
 // CommonJS require()
 
 function require(p){
+    if ('fs' == p) return {};
     var path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');
@@ -58,13 +59,14 @@ require.register("ejs.js", function(module, exports, require){
  * Module dependencies.
  */
 
-var utils = require('./utils');
+var utils = require('./utils')
+  , fs = require('fs');
 
 /**
  * Library version.
  */
 
-exports.version = '0.5.0';
+exports.version = '0.6.1';
 
 /**
  * Filters.
