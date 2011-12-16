@@ -2,6 +2,8 @@
 SRC = $(shell find lib -name "*.js" -type f)
 UGLIFY_FLAGS = --no-mangle 
 
+all: ejs.min.js
+
 test:
 	@./node_modules/.bin/mocha \
 		--ui exports
