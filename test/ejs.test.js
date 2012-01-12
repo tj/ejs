@@ -286,5 +286,21 @@ module.exports = {
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
       assert.deepEqual(lineno, 6, "Error should been thrown on line 3, was thrown on line "+lineno);
     }
+  },
+
+  'test compile error reports filename': function(){
+    var str = [
+      '<% if(true) {',
+      '<p>Forgot to close the tag</p>',
+      '<% } %>'
+    ].join('\n'),
+    filename = 'test/fakefile.ejs',
+    options = { filename: filename };
+
+    try {
+      ejs.compile(str, options);
+    } catch (err) {
+      assert.ok(~err.message.indexOf(filename));
+    }
   }
 };
