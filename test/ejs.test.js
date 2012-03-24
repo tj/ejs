@@ -286,5 +286,44 @@ module.exports = {
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
       assert.deepEqual(lineno, 6, "Error should been thrown on line 3, was thrown on line "+lineno);
     }
+  },
+  
+  'test slurp' : function() {
+    var expected = 'me\nhere',
+      str = 'me<% %>\nhere';
+    assert.equal(expected, ejs.render(str));
+
+    var expected = 'mehere',
+      str = 'me<% -%>\nhere';
+    assert.equal(expected, ejs.render(str));
+
+    var expected = 'me\nhere',
+      str = 'me<% -%>\n\nhere';
+    assert.equal(expected, ejs.render(str));
+    
+    var expected = 'me inbetween \nhere',
+      str = 'me <%= x %> \nhere';
+    assert.equal(expected, ejs.render(str,{x:'inbetween'}));
+
+    var expected = 'me inbetween here',
+      str = 'me <%= x -%> \nhere';
+    assert.equal(expected, ejs.render(str,{x:'inbetween'}));
+
+    var expected = 'me <p>inbetween</p> here',
+      str = 'me <%- x -%> \nhere';
+    assert.equal(expected, ejs.render(str,{x:'<p>inbetween</p>'}));
+
+    var expected = '\n  Hallo 0\n\n  Hallo 1\n\n',
+      str = '<% for(var i in [1,2]) { %>\n' +
+            '  Hallo <%= i %>\n' +
+            '<% } %>\n';
+    assert.equal(expected, ejs.render(str));
+
+    var expected = '  Hallo 0\n  Hallo 1\n',
+      str = '<% for(var i in [1,2]) { -%>\n' +
+            '  Hallo <%= i %>\n' +
+            '<% } -%>\n';
+    assert.equal(expected, ejs.render(str));
   }
+  
 };
