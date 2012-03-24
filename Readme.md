@@ -17,6 +17,7 @@ Embedded JavaScript templates.
   * Supports tag customization
   * Filter support for designer-friendly templates
   * Client-side support
+  * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
 
 ## Example
 
