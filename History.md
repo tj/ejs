@@ -1,4 +1,9 @@
 
+0.7.0 / 2012-03-24 
+==================
+
+  * Added newline consumption support (`-%>`) [whoatemydomain]
+
 0.6.1 / 2011-12-09 
 ==================
 
