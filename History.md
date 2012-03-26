@@ -1,4 +1,9 @@
 
+0.7.1 / 2012-03-26 
+==================
+
+  * Fixed exception when using express in production caused by typo. [slaskis]
+
 0.7.0 / 2012-03-24 
 ==================
 
