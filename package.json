@@ -7,5 +7,6 @@
   "devDependencies": {
     "mocha": "*"
   },
-  "main": "./lib/ejs.js"
+  "main": "./lib/ejs.js",
+  "repository": "git://github.com/visionmedia/ejs.git"
 }
