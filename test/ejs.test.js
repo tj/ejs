@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -284,7 +283,7 @@ module.exports = {
       assert.ok(~err.message.indexOf("name is not defined"));
       assert.deepEqual(err.name, "ReferenceError");
       var lineno = parseInt(err.toString().match(/ejs:(\d+)\n/)[1]);
-      assert.deepEqual(lineno, 6, "Error should been thrown on line 3, was thrown on line "+lineno);
+      assert.deepEqual(lineno, 6, "Error should been thrown on line 6, was thrown on line "+lineno);
     }
   },
   
