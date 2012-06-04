@@ -132,6 +132,8 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
 
 
 ### Template - template.html
+
+```js
 <html>
 <head>
   <title>My site </title>
@@ -148,9 +150,11 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
   
   <%~ scripts %>    
 </body>
+```
 
 ### Using template (settings.html)
 
+```js
 <%+ template.html %>
 <%+ body %>
 <p>settings here</p>
@@ -158,6 +162,7 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
 <%+ scripts %>
   <script src="/js/settings.js"></script>
 <%+%>
+```
 
 ### Output
 
@@ -186,21 +191,27 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
 
 ### Mixin (mixin.html)
 
+```js
 <button id="mixin">
 </button>
+```
 
 ### Using mixins
 
+```js
 <div>
   <%# mixin.html %>  
 </div>
+```
 
 ### Output
 
+```js
 <div>
   <button id="mixin">
   </button>
 </div>
+```
 
 ## client-side support
 
