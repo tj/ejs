@@ -166,6 +166,7 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
 
 ### Output
 
+```js
 <html>
 <head>
   <title>My site </title>
@@ -181,6 +182,7 @@ renderFile(path, { settings : { views : 'path/to/views' } }, cb)
   <script src="/js/jquery.js"></script>
   <script src="/js/settings.js"></script>
 </body>
+```
 
 ## Mixins
 
