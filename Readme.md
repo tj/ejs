@@ -18,6 +18,8 @@ Embedded JavaScript templates.
   * Filter support for designer-friendly templates
   * Client-side support
   * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
+  * Templating with <%+ template.html %> and <%~ argumentName %>
+  * Mixins with <%# mixin.html %>
 
 ## Example
 
@@ -120,6 +122,85 @@ ejs.filters.last = function(obj) {
   return obj[obj.length - 1];
 };
 ```
+
+## Templates
+
+Path to templates can be set by setting the setting property like
+```js
+renderFile(path, { settings : { views : 'path/to/views' } }, cb)
+```
+
+
+### Template - template.html
+<html>
+<head>
+  <title>My site </title>
+  <link href="/css/mysite.css" rel="stylesheet">
+</head>
+<body>
+  <%~ body %>
+
+	<hr>
+  <footer>
+    <p>&copy; Brand 2012</p>
+	</footer>
+  <script src="/js/jquery.js"></script>
+  
+  <%~ scripts %>    
+</body>
+
+### Using template (settings.html)
+
+<%+ template.html %>
+<%+ body %>
+<p>settings here</p>
+<%+%>
+<%+ scripts %>
+  <script src="/js/settings.js"></script>
+<%+%>
+
+### Output
+
+<html>
+<head>
+  <title>My site </title>
+  <link href="/css/mysite.css" rel="stylesheet">
+</head>
+<body>
+  <p>settings here</p>
+
+	<hr>
+  <footer>
+    <p>&copy; Brand 2012</p>
+	</footer>
+  <script src="/js/jquery.js"></script>
+  <script src="/js/settings.js"></script>
+</body>
+
+## Mixins
+
+Path to mixins can be set by setting the setting property like
+```js
+renderFile(path, { settings : { views : 'path/to/views' } }, cb)
+```
+
+### Mixin (mixin.html)
+
+<button id="mixin">
+</button>
+
+### Using mixins
+
+<div>
+  <%# mixin.html %>  
+</div>
+
+### Output
+
+<div>
+  <button id="mixin">
+  </button>
+</div>
 
 ## client-side support
 
