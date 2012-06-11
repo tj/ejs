@@ -1,3 +1,4 @@
+exports.test = 'bla';
 
 // CommonJS require()
 
@@ -31,11 +32,11 @@ require.register = function (path, fn){
 require.relative = function (parent) {
     return function(p){
       if ('.' != p.substr(0, 1)) return require(p);
-      
+
       var path = parent.split('/')
         , segs = p.split('/');
       path.pop();
-      
+
       for (var i = 0; i < segs.length; i++) {
         var seg = segs[i];
         if ('..' == seg) path.pop();
@@ -70,7 +71,7 @@ exports.version = '0.6.1';
 
 /**
  * Filters.
- * 
+ *
  * @type Object
  */
 
@@ -78,7 +79,7 @@ var filters = exports.filters = require('./filters');
 
 /**
  * Intermediate js cache.
- * 
+ *
  * @type Object
  */
 
@@ -139,11 +140,11 @@ function rethrow(err, str, filename, lineno){
 
   // Alter exception message
   err.path = filename;
-  err.message = (filename || 'ejs') + ':' 
-    + lineno + '\n' 
-    + context + '\n\n' 
+  err.message = (filename || 'ejs') + ':'
+    + lineno + '\n'
+    + context + '\n\n'
     + err.message;
-  
+
   throw err;
 }
 
@@ -165,13 +166,13 @@ var parse = exports.parse = function(str, options){
     , "\nwith (locals) {"
     , "\n  buf.push('"
   ];
-  
+
   var lineno = 1;
 
   for (var i = 0, len = str.length; i < len; ++i) {
     if (str.slice(i, open.length + i) == open) {
       i += open.length
-  
+
       var prefix, postfix, line = '__stack.lineno=' + lineno;
       switch (str.substr(i, 1)) {
         case '=':
@@ -228,12 +229,12 @@ var parse = exports.parse = function(str, options){
 
 var compile = exports.compile = function(str, options){
   options = options || {};
-  
+
   var input = JSON.stringify(str)
     , filename = options.filename
         ? JSON.stringify(options.filename)
         : 'undefined';
-  
+
   // Adds the fancy stack trace meta info
   str = [
     'var __stack = { lineno: 1, input: ' + input + ', filename: ' + filename + ' };',
@@ -244,7 +245,7 @@ var compile = exports.compile = function(str, options){
     '  rethrow(err, __stack.input, __stack.filename, __stack.lineno);',
     '}'
   ].join("\n");
-  
+
   if (options.debug) console.log(str);
   var fn = new Function('locals, filters, escape', str);
   return function(locals){
@@ -563,5 +564,6 @@ exports.escape = function(html){
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 };
- 
+
 }); // module: utils.js
+

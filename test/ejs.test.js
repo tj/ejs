@@ -3,13 +3,14 @@
  */
 
 var ejs = require('../')
-  , assert = require('assert');
+  , assert = require('assert')
+  , fs = require('fs');
 
 module.exports = {
   'test .version': function(){
     assert.ok(/^\d+\.\d+\.\d+$/.test(ejs.version), 'Test .version format');
   },
-  
+
   'test html': function(){
     assert.equal('<p>yay</p>', ejs.render('<p>yay</p>'));
   },
@@ -24,39 +25,39 @@ module.exports = {
       assert.equal(res, html);
     })
   },
-  
+
   'test buffered code': function(){
     var html = '<p>tj</p>',
       str = '<p><%= name %></p>',
       locals = { name: 'tj' };
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
-  
+
   'test unbuffered code': function(){
     var html = '<p>tj</p>',
       str = '<% if (name) { %><p><%= name %></p><% } %>',
       locals = { name: 'tj' };
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
-  
+
   'test `scope` option': function(){
     var html = '<p>tj</p>',
       str = '<p><%= this %></p>';
     assert.equal(html, ejs.render(str, { scope: 'tj' }));
   },
-  
+
   'test escaping': function(){
     assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
     assert.equal('<script>', ejs.render('<%- "<script>" %>'));
   },
-  
+
   'test newlines': function(){
     var html = '\n<p>tj</p>\n<p>tj@sencha.com</p>',
       str = '<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>',
       locals = { name: 'tj', email: 'tj@sencha.com' };
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
-  
+
   'test single quotes': function(){
     var html = '<p>WAHOO</p>',
       str = "<p><%= up('wahoo') %></p>",
@@ -88,14 +89,14 @@ module.exports = {
       str = "<p>backslash: '\\'</p>";
     assert.equal(html, ejs.render(str));
   },
-  
+
   'test double quotes': function(){
     var html = '<p>WAHOO</p>',
       str = '<p><%= up("wahoo") %></p>',
       locals = { up: function(str){ return str.toUpperCase(); }};
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
-  
+
   'test multiple double quotes': function() {
     var html = '<p>just a "test" wahoo</p>',
       str = '<p>just a "test" wahoo</p>';
@@ -111,7 +112,7 @@ module.exports = {
       str = '<p><%=bar%></p>';
     assert.equal(html, ejs.render(str, { bar: 'foo' }));
   },
-  
+
   'test whitespace': function(){
     var html = '<p>foo</p>',
       str = '<p><%="foo"%></p>';
@@ -121,7 +122,7 @@ module.exports = {
       str = '<p><%=bar%></p>';
     assert.equal(html, ejs.render(str, { locals: { bar: 'foo' }}));
   },
-  
+
   'test custom tags': function(){
     var html = '<p>foo</p>',
       str = '<p>{{= "foo" }}</p>';
@@ -157,7 +158,7 @@ module.exports = {
       close: '??>'
     }));
   },
-  
+
   'test global custom tags': function(){
     var html = '<p>foo</p>',
       str = '<p>{{= "foo" }}</p>';
@@ -167,7 +168,7 @@ module.exports = {
     delete ejs.open;
     delete ejs.close;
   },
-  
+
   'test iteration': function(){
     var html = '<p>foo</p>',
       str = '<% for (var key in items) { %>'
@@ -178,7 +179,7 @@ module.exports = {
         items: ['foo']
       }
     }));
-    
+
     var html = '<p>foo</p>',
       str = '<% items.forEach(function(item){ %>'
         + '<p><%= item %></p>'
@@ -189,7 +190,7 @@ module.exports = {
       }
     }));
   },
-  
+
   'test filter support': function(){
     var html = 'Zab',
       str = '<%=: items | reverse | first | reverse | capitalize %>';
@@ -199,7 +200,7 @@ module.exports = {
       }
     }));
   },
-  
+
   'test filter argument support': function(){
     var html = 'tj, guillermo',
       str = '<%=: users | map:"name" | join:", " %>';
@@ -212,7 +213,7 @@ module.exports = {
       }
     }));
   },
-  
+
   'test sort_by filter': function(){
     var html = 'tj',
       str = '<%=: users | sort_by:"name" | last | get:"name" %>';
@@ -226,7 +227,7 @@ module.exports = {
       }
     }));
   },
-  
+
   'test custom filters': function(){
     var html = 'Welcome Tj Holowaychuk',
       str = '<%=: users | first | greeting %>';
@@ -244,16 +245,16 @@ module.exports = {
     }));
   },
 
-  'test useful stack traces': function(){  
+  'test useful stack traces': function(){
     var str = [
       "A little somethin'",
       "somethin'",
-      "<% if (name) { %>", // Failing line 
+      "<% if (name) { %>", // Failing line
       "  <p><%= name %></p>",
       "  <p><%= email %></p>",
       "<% } %>"
     ].join("\n");
-    
+
     try {
       ejs.render(str)
     } catch (err) {
@@ -263,20 +264,20 @@ module.exports = {
       assert.deepEqual(lineno,3, "Error should been thrown on line 3, was thrown on line "+lineno);
     }
   },
-  
-  'test useful stack traces multiline': function(){  
+
+  'test useful stack traces multiline': function(){
     var str = [
       "A little somethin'",
       "somethin'",
       "<% var some = 'pretty';",
       "   var multiline = 'javascript';",
       "%>",
-      "<% if (name) { %>", // Failing line 
+      "<% if (name) { %>", // Failing line
       "  <p><%= name %></p>",
       "  <p><%= email %></p>",
       "<% } %>"
     ].join("\n");
-    
+
     try {
       ejs.render(str)
     } catch (err) {
@@ -286,7 +287,7 @@ module.exports = {
       assert.deepEqual(lineno, 6, "Error should been thrown on line 6, was thrown on line "+lineno);
     }
   },
-  
+
   'test slurp' : function() {
     var expected = 'me\nhere',
       str = 'me<% %>\nhere';
@@ -299,7 +300,7 @@ module.exports = {
     var expected = 'me\nhere',
       str = 'me<% -%>\n\nhere';
     assert.equal(expected, ejs.render(str));
-    
+
     var expected = 'me inbetween \nhere',
       str = 'me <%= x %> \nhere';
     assert.equal(expected, ejs.render(str,{x:'inbetween'}));
@@ -323,6 +324,44 @@ module.exports = {
             '  Hallo <%= i %>\n' +
             '<% } -%>\n';
     assert.equal(expected, ejs.render(str));
-  }
-  
+  },
+  'test templates': function(){
+      var html = fs.readFileSync(__dirname + '/fixtures/level3_composed.html', 'utf8'),
+          options = {
+              settings : {
+                  views : __dirname + '/fixtures/'
+              }
+          };
+
+      ejs.renderFile(__dirname + '/fixtures/level3.html', options, function(err, res){
+          assert.ok(!err);
+          assert.deepEqual(res, html);
+      })
+  },
+  'test mixins': function(){
+      var html = fs.readFileSync(__dirname + '/fixtures/mixin_base_composed.html', 'utf8'),
+      options = {
+        settings : {
+              views : __dirname + '/fixtures/'
+          }
+      };
+
+      ejs.renderFile(__dirname + '/fixtures/mixin_base.html', options, function(err, res){
+          assert.ok(!err);
+          assert.equal(res, html);
+    })
+  },
+  'test template with mixin': function(){
+      var html = fs.readFileSync(__dirname + '/fixtures/mixin_template_base_composed.html', 'utf8'),
+          options = {
+              settings : {
+                  views : __dirname + '/fixtures/'
+              }
+          };
+
+      ejs.renderFile(__dirname + '/fixtures/mixin_template_base.html', options, function(err, res){
+          assert.ok(!err);
+          assert.equal(res, html);
+      })
+   }
 };
