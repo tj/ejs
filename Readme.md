@@ -97,6 +97,8 @@ In the above _block1_ has a default value defined, if _block1_ is not passed in
 the default value would be used. However, if _block1_ was specified, then it 
 would override the default value. 
 
+Please note that blocks must be terminated with an _end_ statement.
+
 ## Mixins
 
 This effectively replace partials() from Express 2.x.  You can include partiral 
