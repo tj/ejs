@@ -6,7 +6,8 @@ all: ejs.min.js
 
 test:
 	@./node_modules/.bin/mocha \
-		--ui exports
+		--require should \
+		--reporter spec
 
 ejs.js: $(SRC)
 	@node support/compile.js $^

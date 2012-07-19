@@ -5,7 +5,8 @@
   "author": "TJ Holowaychuk <tj@vision-media.ca>",
   "keywords": ["template", "engine", "ejs"],
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "should": "*"
   },
   "main": "./lib/ejs.js",
   "repository": "git://github.com/visionmedia/ejs.git"
