@@ -18,6 +18,8 @@ Embedded JavaScript templates.
   * Filter support for designer-friendly templates
   * Client-side support
   * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
+  * Layouts with <% extends foo.html %> and <% block block_name %>
+  * Mixins with <% include %>
 
 ## Example
 
@@ -54,6 +56,55 @@ Custom tags can also be applied globally:
 Which would make the following a valid template:
 
     <h1>{{= title }}</h1>
+
+## Layouts and Blocks
+
+Layout for a view can be specified by using :
+
+    <% extends layout.html %>
+
+This will insert the contents of layout.html at the location of the extends 
+statement.  Extends are used with blocks to provide dynamic layout capabilities
+with default behaviour.
+
+For example, consider the following layout.html:
+    <div id="has-default">
+        <% block block1%>
+           <p>This is default value</p>
+        <% end %>
+    </div>
+    <div class="no-default">
+        <% block block2%>
+        <% end %>
+    </div>
+
+In your ejs file, specifying:
+    
+    <% extends layout.html %>
+    <% block block2 %><p>Block 2 value</p><%end%>
+
+would cause the following to be rendered.
+    
+    <div id="has-default">
+        <p>This is default value</p>
+    </div>
+    <div class="no-default">
+        <p>Block 2 value</p>
+    </div>
+
+In the above _block1_ has a default value defined, if _block1_ is not passed in
+the default value would be used. However, if _block1_ was specified, then it 
+would override the default value. 
+
+## Mixins
+
+This effectively replace partials() from Express 2.0.  You can include partiral 
+ejs by specifying:
+
+    <% include component.html %>
+
+This would insert the contents of _component.html_ at the location of the include
+statement.
 
 ## Filters
 
@@ -120,6 +171,7 @@ ejs.filters.last = function(obj) {
   return obj[obj.length - 1];
 };
 ```
+
 
 ## client-side support
 
