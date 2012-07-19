@@ -68,6 +68,7 @@ statement.  Extends are used with blocks to provide dynamic layout capabilities
 with default behaviour.
 
 For example, consider the following layout.html:
+
     <div id="has-default">
         <% block block1%>
            <p>This is default value</p>
@@ -98,7 +99,7 @@ would override the default value.
 
 ## Mixins
 
-This effectively replace partials() from Express 2.0.  You can include partiral 
+This effectively replace partials() from Express 2.x.  You can include partiral 
 ejs by specifying:
 
     <% include component.html %>
