@@ -16,6 +16,7 @@ Embedded JavaScript templates.
   * Unescaped buffering with `<%- code %>`
   * Supports tag customization
   * Filter support for designer-friendly templates
+  * Includes
   * Client-side support
   * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
 
@@ -43,9 +44,25 @@ Embedded JavaScript templates.
   - `close`           Closing tag, defaulting to "%>"
   - *                 All others are template-local variables
 
-## Custom tags
+## Includes
 
-Custom tags can also be applied globally:
+ Includes are relative to the template with the `include` statement,
+ for example if you have "./views/users.ejs" and "./views/user/show.ejs"
+ you would use `<% include user/show %>`. The included file(s) are literally
+ included into the template, _no_ IO is performed after compilation, thus
+ local variables are available to these included templates.
+
+```
+<ul>
+  <% users.forEach(function(user){ %>
+    <% include user/show %>
+  <% }) %>
+</ul>
+```
+
+## Custom delimiters
+
+Custom delimiters can also be applied globally:
 
     var ejs = require('ejs');
     ejs.open = '{{';
