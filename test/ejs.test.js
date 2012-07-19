@@ -3,8 +3,7 @@
  */
 
 var ejs = require('../')
-  , assert = require('assert')
-  , fs = require('fs');
+  , assert = require('assert');
 
 module.exports = {
   'test .version': function(){
@@ -39,18 +38,18 @@ module.exports = {
       locals = { name: 'tj' };
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
- 
+  
   'test `scope` option': function(){
     var html = '<p>tj</p>',
       str = '<p><%= this %></p>';
     assert.equal(html, ejs.render(str, { scope: 'tj' }));
   },
-   
+  
   'test escaping': function(){
     assert.equal('&lt;script&gt;', ejs.render('<%= "<script>" %>'));
     assert.equal('<script>', ejs.render('<%- "<script>" %>'));
   },
- 
+  
   'test newlines': function(){
     var html = '\n<p>tj</p>\n<p>tj@sencha.com</p>',
       str = '<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>',
@@ -71,7 +70,6 @@ module.exports = {
       locals = { up: function(str){ return str.toUpperCase(); }};
     assert.equal(html, ejs.render(str, { locals: locals }));
   },
-  
 
   'test multiple single quotes': function() {
     var html = "<p>couldn't shouldn't can't</p>",
@@ -168,7 +166,7 @@ module.exports = {
     assert.equal(html, ejs.render(str));
     delete ejs.open;
     delete ejs.close;
-  }, 
+  },
   
   'test iteration': function(){
     var html = '<p>foo</p>',
@@ -201,7 +199,7 @@ module.exports = {
       }
     }));
   },
-
+  
   'test filter argument support': function(){
     var html = 'tj, guillermo',
       str = '<%=: users | map:"name" | join:", " %>';
@@ -325,134 +323,6 @@ module.exports = {
             '  Hallo <%= i %>\n' +
             '<% } -%>\n';
     assert.equal(expected, ejs.render(str));
-  },
-
-  'test extends and block' : function() {
-      var expected = 
-          '<div id="layout_1">\n' +
-          '    <p>block #1</p>\n' + 
-          '    <hr>\n' +
-          '    <p>block #2</p>\n' +
-          '</div>\n\n'
-        , options = {
-          viewsDir: 'test/fixtures'
-        }
-        , str =
-          '<% extends layout_1.ejs %>\n' +
-          '<% block block_1 %><p>block #1</p><% end %>' +
-          '<% block block_2 %><p>block #2</p><% end %>';
-      assert.equal(ejs.render(str, options), expected);
-
-      var expected = 
-          '<div>\n' +
-          '<div id="layout_1">\n' +
-          '    <p>block #1</p>\n' + 
-          '    <hr>\n' +
-          '    <p>block #2</p>\n' +
-          '</div>\n\n' +
-          '</div>'
-        , options = {
-          viewsDir: 'test/fixtures'
-        }
-        , str =
-          '<div>\n' +
-          '<% extends layout_1.ejs %>\n' +
-          '<% block block_1 %><p>block #1</p><% end %>' +
-          '<% block block_2 %><p>block #2</p><% end %>' +
-          '</div>';
-      assert.equal(ejs.render(str, options), expected);
-
-  },
-
-  'test extends with default blocks' : function() {
-      var expected = 
-          '<div id="layout_1">\n' +
-          '    <p>block #1</p>\n' + 
-          '    <hr>\n' +
-          '    \n' +
-          '    <p>default string block 2</p>\n' +
-          '    \n' +
-          '</div>\n'
-        , options = {
-          viewsDir: 'test/fixtures'
-        }
-        , str = '<% extends layout_1.ejs %>' +
-          '<% block block_1 %><p>block #1</p><% end %>';
-      assert.equal(ejs.render(str, options), expected);
-  }, 
-
-  'test recursive extends and blocks' : function () {
-      var expected = 
-           '<div id="layout_2">\n' +
-           '    <div id="layout_1_wrapper">\n' +   
-           '        <div id="layout_1">\n' +
-           '    <p>from layout 2 - block 1</p>\n' +
-           '    <hr>\n' +
-           '    \n' +
-           '        <p>from template - layout 2: block 1</p>\n' +
-           '    \n' +
-           '</div>\n\n' +
-           '    </div>\n' +
-           '    \n' +
-           '    \n' +
-           '    <p>from template - layout 2: block 2</p>\n' +
-           '</div>\n'
-        , options = {
-          viewsDir: 'test/fixtures'
-        }
-        , str = '<% extends layout_2.ejs %>' +
-          '<% block l2_block_1 %><p>from template - layout 2: block 1</p><% end %>' +
-          '<% block l2_block_2 %><p>from template - layout 2: block 2</p><% end %>';
-      assert.equal(ejs.render(str, options), expected);
-  },
-
-  'test parsing errors' : function() {
-    var str = '<% block test %>';
-    try {
-      ejs.render(str)
-    } catch (err) {
-      assert.ok(~err.message.indexOf("Unmatched block statment..."));
-    }
-    
-    var str = '<% extends %>';
-    try {
-      ejs.render(str)
-    } catch (err) {
-      assert.ok(~err.message.indexOf("Must specify filename after extends..."));
-    }
-
-    var str = '<% block %>';
-    try {
-      ejs.render(str)
-    } catch (err) {
-      assert.ok(~err.message.indexOf("Must specify name for block..."));
-    }
-
-    var str = '<% include %>';
-    try {
-      ejs.render(str)
-    } catch (err) {
-      assert.ok(~err.message.indexOf("Must specify file to include..."));
-    }
-
-    var str = '<% end %>';
-    try {
-      ejs.render(str)
-    } catch (err) {
-      assert.ok(~err.message.indexOf("Encountered end without matching block statement."));
-    }
-  },
-
-  'test include' : function() {
-      var expected = '<div id="include_file">\n' +
-          '<h1>{= name}</h1>' +
-          '</div>\n'
-        , options = {
-          viewsDir: 'test/fixtures'
-        }
-        , str = '<div id="include_file">\n' +
-          '<% include user.ejs %>' +
-          '</div>\n'
-      assert.equal(ejs.render(str, options), expected);
-  } 
+  }
+  
 };
