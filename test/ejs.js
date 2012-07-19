@@ -165,3 +165,17 @@ describe('exceptions', function(){
     }
   })
 })
+
+describe('includes', function(){
+  it('should include ejs', function(){
+    var file = 'test/fixtures/include.ejs';
+    ejs.render(fixture('include.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('include.html'));
+  })
+
+  it('should work when nested', function(){
+    var file = 'test/fixtures/menu.ejs';
+    ejs.render(fixture('menu.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('menu.html'));
+  })
+})
