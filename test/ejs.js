@@ -178,4 +178,10 @@ describe('includes', function(){
     ejs.render(fixture('menu.ejs'), { filename: file, pets: users })
       .should.equal(fixture('menu.html'));
   })
+
+  it('should include arbitrary files as-is', function(){
+    var file = 'test/fixtures/include.css.ejs';
+    ejs.render(fixture('include.css.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('include.css.html'));
+  })
 })
