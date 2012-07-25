@@ -1,4 +1,10 @@
 
+0.8.0 / 2012-07-25 
+==================
+
+  * add `<% include file %>` support
+  * fix wrapping of custom require in build step. Closes #57
+
 0.7.3 / 2012-04-25 
 ==================
 
