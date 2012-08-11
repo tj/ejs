@@ -185,3 +185,10 @@ describe('includes', function(){
       .should.equal(fixture('include.css.html'));
   })
 })
+
+describe('comments', function() {
+  it('should fully render with comments removed', function() {
+    ejs.render(fixture('comments.ejs'))
+      .should.equal(fixture('comments.html'));
+  })
+})
