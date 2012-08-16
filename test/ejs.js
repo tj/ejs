@@ -169,7 +169,7 @@ describe('exceptions', function(){
 describe('includes', function(){
   it('should include ejs', function(){
     var file = 'test/fixtures/include.ejs';
-    ejs.render(fixture('include.ejs'), { filename: file, pets: users })
+    ejs.render(fixture('include.ejs'), { filename: file, pets: users, open: '[[', close: ']]' })
       .should.equal(fixture('include.html'));
   })
 
