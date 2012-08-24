@@ -52,6 +52,13 @@ describe('ejs.compile(str, options)', function(){
     delete ejs.open;
     delete ejs.close;
   })
+
+  it('should have a working client option', function(){
+    var fn = ejs.compile('<p><%= foo %></p>', { client: true });
+    var str = fn.toString();
+    eval('var preFn = ' + str);
+    preFn({ foo: 'bar' }).should.equal('<p>bar</p>');
+  })
 })
 
 describe('ejs.render(str, options)', function(){
@@ -164,6 +171,18 @@ describe('exceptions', function(){
       done();
     }
   })
+
+  it('should not include __stack if compileDebug is false', function() {
+    try {
+      ejs.render(fixture('error.ejs'), {
+        filename: 'error.ejs',
+        compileDebug: false
+      });
+    } catch (err) {
+      err.should.not.have.property('path');
+      err.stack.split('\n').slice(0, 8).join('\n').should.not.equal(fixture('error.out'));
+    }
+  });
 })
 
 describe('includes', function(){
