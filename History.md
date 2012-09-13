@@ -1,4 +1,9 @@
 
+0.8.3 / 2012-09-13 
+==================
+
+  * allow pre-compiling into a standalone function [seanmonstar]
+
 0.8.2 / 2012-08-16 
 ==================
 
