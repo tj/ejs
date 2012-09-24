@@ -203,6 +203,17 @@ describe('includes', function(){
     ejs.render(fixture('include.css.ejs'), { filename: file, pets: users })
       .should.equal(fixture('include.css.html'));
   })
+
+  it('should pass compileDebug to include', function(){
+    var file = 'test/fixtures/include.ejs';
+    var fn = ejs.compile(fixture('include.ejs'), { filename: file, open: '[[', close: ']]', compileDebug: false, client: true })
+    var str = fn.toString();
+    eval('var preFn = ' + str);
+    str.should.not.match(/__stack/);
+    (function() {
+      preFn({ pets: users });
+    }).should.not.throw();
+  })
 })
 
 describe('comments', function() {
