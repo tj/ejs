@@ -1,4 +1,3 @@
-[![build status](https://secure.travis-ci.org/visionmedia/ejs.png)](http://travis-ci.org/visionmedia/ejs)
 
 # EJS
 
@@ -139,6 +138,19 @@ Currently these filters are available:
 ejs.filters.last = function(obj) {
   return obj[obj.length - 1];
 };
+```
+
+## Layouts
+
+  Currently EJS has no notion of blocks, only compile-time `include`s,
+  however you may still utilize this feature to implement "layouts" by
+  simply including a header and footer like so:
+
+```html
+<% include head %>
+<h1>Title</h1>
+<p>My page</p>
+<% include foot %>
 ```
 
 ## client-side support
