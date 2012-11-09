@@ -6,7 +6,6 @@ all: ejs.min.js
 
 test:
 	@./node_modules/.bin/mocha \
-		--require should \
 		--reporter spec
 
 ejs.js: $(SRC)

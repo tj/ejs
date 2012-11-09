@@ -5,14 +5,14 @@
 var ejs = require('..')
   , fs = require('fs')
   , read = fs.readFileSync
-  , assert = require('assert');
+  , assert = require('should');
 
 /**
  * Load fixture `name`.
  */
 
 function fixture(name) {
-  return read('test/fixtures/' + name, 'utf8');
+  return read('test/fixtures/' + name, 'utf8').replace(/\r/g, '');
 }
 
 /**
