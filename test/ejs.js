@@ -33,23 +33,17 @@ describe('ejs.compile(str, options)', function(){
   it('should throw if there are syntax errors', function(){
     try {
       ejs.compile(fixture('fail.ejs'));
-    } catch (ex) {
-      if (ex.name == 'SyntaxError') {
-        ex.message.indexOf('compiling ejs').should.be.greaterThan(0);
-      } else {
-        throw ex;
-      }
+    } catch (err) {
+      err.message.should.include('compiling ejs');
+
       try {
-        ejs.compile(fixture('fail.ejs'), {filename: 'fail.ejs'});
-      } catch (ex) {
-        if (ex.name == 'SyntaxError') {
-          ex.message.indexOf('fail.ejs').should.be.greaterThan(0);
-        } else {
-          throw ex;
-        }
+        ejs.compile(fixture('fail.ejs'), { filename: 'fail.ejs' });
+      } catch (err) {
+        err.message.should.include('fail.ejs');
         return;
       }
     }
+
     assert(false, 'compiling a file with invalid syntax should throw an exception');
   })
 
