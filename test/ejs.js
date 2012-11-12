@@ -30,6 +30,29 @@ describe('ejs.compile(str, options)', function(){
     fn().should.equal('<p>yay</p>');
   })
 
+  it('should throw if there are syntax errors', function(){
+    try {
+      ejs.compile(fixture('fail.ejs'));
+    } catch (ex) {
+      if (ex.name == 'SyntaxError') {
+        ex.message.indexOf('compiling ejs').should.be.greaterThan(0);
+      } else {
+        throw ex;
+      }
+      try {
+        ejs.compile(fixture('fail.ejs'), {filename: 'fail.ejs'});
+      } catch (ex) {
+        if (ex.name == 'SyntaxError') {
+          ex.message.indexOf('fail.ejs').should.be.greaterThan(0);
+        } else {
+          throw ex;
+        }
+        return;
+      }
+    }
+    assert(false, 'compiling a file with invalid syntax should throw an exception');
+  })
+
   it('should allow customizing delimiters', function(){
     var fn = ejs.compile('<p>{= name }</p>', { open: '{', close: '}' });
     fn({ name: 'tobi' }).should.equal('<p>tobi</p>');
