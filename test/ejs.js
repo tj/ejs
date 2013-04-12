@@ -176,6 +176,11 @@ describe('filters', function(){
     ejs.render('<%=: users | map:"name" | join:", " %>', { users: users })
       .should.equal('tobi, loki, jane');
   })
+
+  it('should accept arguments containing :', function(){
+    ejs.render('<%=: users | map:"name" | join:"::" %>', { users: users })
+      .should.equal('tobi::loki::jane');
+  })
 })
 
 describe('exceptions', function(){
