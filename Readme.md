@@ -3,6 +3,8 @@
 
 Embedded JavaScript templates.
 
+[![Build Status](https://travis-ci.org/visionmedia/ejs.png)](https://travis-ci.org/visionmedia/ejs)
+
 ## Installation
 
     $ npm install ejs
