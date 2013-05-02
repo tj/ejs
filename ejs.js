@@ -163,6 +163,7 @@ var parse = exports.parse = function(str, options){
 
   var buf = [
       "var buf = [];"
+    ,"var echo = buf.push;"
     , "\nwith (locals) {"
     , "\n  buf.push('"
   ];
