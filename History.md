@@ -1,4 +1,11 @@
 
+0.8.4 / 2013-05-08 
+==================
+
+  * fix support for colons in filter arguments
+  * fix double callback when the callback throws
+  * rename escape option
+
 0.8.3 / 2012-09-13 
 ==================
 
