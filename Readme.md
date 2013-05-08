@@ -1,4 +1,3 @@
-
 # EJS
 
 Embedded JavaScript templates.
@@ -27,6 +26,10 @@ Embedded JavaScript templates.
     <% if (user) { %>
 	    <h2><%= user.name %></h2>
     <% } %>
+    
+## Try out a live example now
+
+<a href="https://runnable.com/ejs" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
 
 ## Usage
 
