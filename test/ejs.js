@@ -107,6 +107,25 @@ describe('ejs.renderFile(path, options, fn)', function(){
       done();
     });
   })
+
+  it('should not catch err threw by callback', function(done){
+    var options = { name: 'tj', open: '{', close: '}' };
+    var counter = 0;
+    try {
+      ejs.renderFile('test/fixtures/user.ejs', options, function(err, html){
+        counter++;
+        if (err) {
+          err.message.should.not.equal('Exception in callback');
+          return done(err);
+        }
+        throw new Error('Exception in callback');
+      });
+    } catch (err) {
+      counter.should.equal(1);
+      err.message.should.equal('Exception in callback');
+      done();
+    }
+  })
 })
 
 describe('<%=', function(){
@@ -175,6 +194,11 @@ describe('filters', function(){
   it('should accept arguments', function(){
     ejs.render('<%=: users | map:"name" | join:", " %>', { users: users })
       .should.equal('tobi, loki, jane');
+  })
+
+  it('should accept arguments containing :', function(){
+    ejs.render('<%=: users | map:"name" | join:"::" %>', { users: users })
+      .should.equal('tobi::loki::jane');
   })
 })
 
