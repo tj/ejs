@@ -263,3 +263,13 @@ describe('comments', function() {
       .should.equal(fixture('comments.html'));
   })
 })
+
+
+describe('require', function() {
+  it('should allow ejs templates to be required as node modules', function() {
+      var file = 'test/fixtures/include.ejs'
+        , template = require(__dirname + '/fixtures/menu.ejs');
+      template({ filename: file, pets: users })
+        .should.equal(fixture('menu.html'));
+  })
+})
