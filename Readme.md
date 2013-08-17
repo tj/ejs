@@ -20,6 +20,7 @@ Embedded JavaScript templates.
   * Includes
   * Client-side support
   * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
+  * literal tag make content in the tag pair be taken as literal and not be parsed
 
 ## Example
 
@@ -162,6 +163,16 @@ ejs.filters.last = function(obj) {
 
   include `./ejs.js` or `./ejs.min.js` and `require("ejs").compile(str)`.
 
+##literal tag
+  Use  literal tag to make content in the tag pair be taken as literal and 
+  not be parsed.For example ,if the html content in your ejs template contains 
+  delimiter ,you should use literal tag to make them not parsed.
+
+```html
+  <%literal%>
+    <span>this span contains delimeters <% %> , it should be wrapped by literal tag</span>
+  <%/literal%>
+```
 ## License 
 
 (The MIT License)
