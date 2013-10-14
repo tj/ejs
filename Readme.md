@@ -162,13 +162,11 @@ ejs.filters.last = function(obj) {
 ## extend and blocks
 
   Currently EJS has come up with extend and blocks, they can support:
-  (1) Multilayer inheritance, that is the child can extend the parent file, 
-      the father coulud still extend the grandfather
-  (2) the blocks in the clild will replace the block with the same name in the parent file,
-      the conent outside blocks in the clild will be ignored, and
-      the content in the blocks that are not replaced in the parent file will run directly, as no blocks surround it
-  (3) the include could also work in the file or blocks
-  (4) notice: no space between the open tag and `+` or `block`
+
+  - Multilayer inheritance, that is the child can extend the parent file, the father coulud still extend the grandfather
+  - the blocks in the clild will replace the block with the same name in the parent file, the conent outside blocks in the clild will be ignored, and the content in the blocks that are not replaced in the parent file will run directly, as no blocks surround it
+  - the include could also work in the file or blocks
+  - notice: no space between the open tag and `+` or `block`
 
 ```parent.ejs
 <%block head%>
