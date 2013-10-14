@@ -17,6 +17,8 @@ Embedded JavaScript templates.
   * Unescaped buffering with `<%- code %>`
   * Supports tag customization
   * Filter support for designer-friendly templates
+  * Extend file with `<%+ file-to-be-extended %>`
+  * Blocks `<%block blockname%>content comes here<%/block%>`, cooperate with extend
   * Includes
   * Client-side support
   * Newline slurping with `<% code -%>` or `<% -%>` or `<%= code -%>` or `<%- code -%>`
@@ -145,10 +147,9 @@ ejs.filters.last = function(obj) {
 };
 ```
 
-## Layouts
+## Layouts without blocks
 
-  Currently EJS has no notion of blocks, only compile-time `include`s,
-  however you may still utilize this feature to implement "layouts" by
+  You may utilize compile-time `include`s without blocks to implement "layouts" by
   simply including a header and footer like so:
 
 ```html
@@ -157,6 +158,34 @@ ejs.filters.last = function(obj) {
 <p>My page</p>
 <% include foot %>
 ```
+
+## extend and blocks
+
+  Currently EJS has come up with extend and blocks, they can support:
+  (1) Multilayer inheritance, that is the child can extend the parent file, 
+      the father coulud still extend the grandfather
+  (2) the blocks in the clild will replace the block with the same name in the parent file,
+      the conent outside blocks in the clild will be ignored, and
+      the content in the blocks that are not replaced in the parent file will run directly, as no blocks surround it
+  (3) the include could also work in the file or blocks
+  (4) notice: no space between the open tag and `+` or `block`
+
+```parent.ejs
+<%block head%>
+    head
+<%/block%>
+<%block body%>
+    body
+<%/block%>
+```
+
+```child.ejs
+<%+ parent %>
+<%block head%>
+    the clild's head
+<%/block%>
+```
+
 
 ## client-side support
 
