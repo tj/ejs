@@ -195,6 +195,21 @@ describe('filters', function(){
     ejs.render('<%=: users | map:"name" | join:", " %>', { users: users })
       .should.equal('tobi, loki, jane');
   })
+  
+  it('should truncate string', function(){
+    ejs.render('<%=: word | truncate: 3 %>', { word: 'World' })
+      .should.equal('Wor');
+  })
+
+  it('should append string if string is longer', function(){
+    ejs.render('<%=: word | truncate: 2,"..." %>', { word: 'Testing' })
+      .should.equal('Te...');
+  })
+
+  it('should not append string if string is shorter', function(){
+    ejs.render('<%=: word | truncate: 10,"..." %>', { word: 'Testing' })
+      .should.equal('Testing');
+  })
 
   it('should accept arguments containing :', function(){
     ejs.render('<%=: users | map:"name" | join:"::" %>', { users: users })
