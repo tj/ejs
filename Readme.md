@@ -165,6 +165,7 @@ ejs.filters.last = function(obj) {
 
   - Multilayer inheritance, that is the child can extend the parent file, the father coulud still extend the grandfather
   - the blocks in the clild will replace the block with the same name in the parent file, the conent outside blocks in the clild will be ignored, and the content in the blocks that are not replaced in the parent file will run directly, as no blocks surround it
+  - faster, the test in benchmark shows that the layout using extend is 33% faster than that using include
   - the include could also work in the file or blocks
   - notice: no space between the open tag and `+` or `block`
 
