@@ -129,9 +129,25 @@ describe('ejs.renderFile(path, options, fn)', function(){
 })
 
 describe('<%=', function(){
-  it('should escape', function(){
+  it('should escape <script>', function(){
     ejs.render('<%= name %>', { name: '<script>' })
       .should.equal('&lt;script&gt;');
+  })
+  it("should escape '", function(){
+    ejs.render('<%= name %>', { name: "The Jones's" })
+      .should.equal('The Jones&#39;s');
+  })
+  it("shouldn't escape &amp;", function(){
+    ejs.render('<%= name %>', { name: "Us &amp; Them" })
+      .should.equal('Us &amp; Them');
+  })
+  it("shouldn't escape &#93;", function(){
+    ejs.render('<%= name %>', { name: "The Jones&#39;s" })
+      .should.equal('The Jones&#39;s');
+  })
+  it("should escape &foo_bar;", function(){
+    ejs.render('<%= name %>', { name: "&foo_bar;" })
+      .should.equal('&amp;foo_bar;');
   })
 })
 
@@ -195,7 +211,7 @@ describe('filters', function(){
     ejs.render('<%=: users | map:"name" | join:", " %>', { users: users })
       .should.equal('tobi, loki, jane');
   })
-  
+
   it('should truncate string', function(){
     ejs.render('<%=: word | truncate: 3 %>', { word: 'World' })
       .should.equal('Wor');
