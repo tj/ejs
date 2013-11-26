@@ -1,0 +1,7 @@
+<% layout layout-page-include -%>
+<% block page -%>
+<ul>
+  <% pets.forEach(function(pet){ -%>
+  <li><%= pet.name %></li>
+  <% }) -%>
+</ul>

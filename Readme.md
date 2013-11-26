@@ -147,15 +147,39 @@ ejs.filters.last = function(obj) {
 
 ## Layouts
 
-  Currently EJS has no notion of blocks, only compile-time `include`s,
-  however you may still utilize this feature to implement "layouts" by
-  simply including a header and footer like so:
+  Layout files are relative to the template with the `layout` statement,
+  for example if you have "./views/users.ejs" and "./views/layouts/layout.ejs"
+  you would use `<% layout layouts/layout %>`. Layout statements must be in the
+  first line of the template.
 
+  Content is passed from the template to the layout using `block` statement.
+  For example to set a block named "content" you would use <% block content %>.
+  Blocks are accessed inside the layout using the local `blocks` variable. For
+  example, to write out the content block, you would use <%- blocks.content %>.
+
+*users.ejs*
 ```html
-<% include head %>
-<h1>Title</h1>
-<p>My page</p>
-<% include foot %>
+<% layout layouts/layout %>
+<% block title %>
+Users
+<% block content %>
+<ul>
+  <% users.forEach(function(user){ %>
+    <li><%= user.name %></li>
+  <% }) %>
+</ul>
+```
+
+*layouts/layout.ejs*
+```html
+<html>
+  <head>
+    <title><%= blocks.title %></title>
+  </head>
+  <body>
+    <%- blocks.content %>
+  </body>
+</html>
 ```
 
 ## client-side support

@@ -288,6 +288,55 @@ describe('includes', function(){
   })
 })
 
+describe('layout', function() {
+  it('should include layout', function(){
+    var file = 'test/fixtures/layout.ejs';
+    ejs.render(fixture('layout.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout.html'))
+  })
+
+  it('should work when nested', function(){
+    var file = 'test/fixtures/layout-nested.ejs';
+    ejs.render(fixture('layout-nested.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-nested.html'))
+  })
+
+  it('should override parent block', function(){
+    var file = 'test/fixtures/layout-override.ejs';
+    ejs.render(fixture('layout-override.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-override.html'))
+  })
+
+  it('should work with includes in blocks', function(){
+    var file = 'test/fixtures/layout-include-block.ejs';
+    ejs.render(fixture('layout-include-block.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-include-block.html'))
+  })
+
+  it('should work with includes in layouts', function(){
+    var file = 'test/fixtures/layout-include-layout.ejs';
+    ejs.render(fixture('layout-include-layout.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-include-layout.html'))
+  })
+
+  it('should work when included', function(){
+    var file = 'test/fixtures/layout-included.ejs';
+    ejs.render(fixture('layout-included.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-included.html'))
+  })
+
+  it('should pass compileDebug to layout', function(){
+    var file = 'test/fixtures/layout.ejs';
+    var fn = ejs.compile(fixture('layout.ejs'), { filename: file, open: '[[', close: ']]', compileDebug: false, client: true })
+    var str = fn.toString();
+    eval('var preFn = ' + str);
+    str.should.not.match(/__stack/);
+    (function() {
+      preFn({ pets: users });
+    }).should.not.throw();
+  })
+})
+
 describe('comments', function() {
   it('should fully render with comments removed', function() {
     ejs.render(fixture('comments.ejs'))

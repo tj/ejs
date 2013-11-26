@@ -1,0 +1,9 @@
+<% layout layout-page -%>
+<% block title -%>
+Page Title
+<% block page -%>
+<ul>
+  <% pets.forEach(function(pet){ -%>
+    <% include layout-pet %>
+  <% }) -%>
+</ul>

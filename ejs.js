@@ -49,6 +49,34 @@ require.relative = function (parent) {
   };
 
 
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
+
 require.register("ejs.js", function(module, exports, require){
 
 /*!
@@ -165,12 +193,16 @@ var parse = exports.parse = function(str, options){
     , buf = "";
 
   buf += 'var buf = [];';
+  if (false !== options._blocks) buf += '\nvar blocks = {};';
   if (false !== options._with) buf += '\nwith (locals || {}) { (function(){ ';
   buf += '\n buf.push(\'';
 
   var lineno = 1;
 
   var consumeEOL = false;
+
+  var layout = null;
+
   for (var i = 0, len = str.length; i < len; ++i) {
     var stri = str[i];
     if (str.slice(i, open.length + i) == open) {
@@ -204,10 +236,28 @@ var parse = exports.parse = function(str, options){
         consumeEOL = true;
       }
 
+      if (0 == js.trim().indexOf('layout')) {
+        var name = js.trim().slice(7).trim();
+        if (!filename) throw new Error('filename option is required for layouts');
+        var path = resolveFile(name, filename);
+        layout = read(path, 'utf8');
+        layout = exports.parse(layout, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false });
+        buf += "');";
+        buf += "\n if (!blocks['default']) blocks['default'] = (function() {\n  var buf=[];";
+        buf += "\n  buf.push('";
+        js = '';
+      }
+      if (layout && true == /^block\s/.test(js.trim())) {
+        var name = js.trim().slice(5).trim();
+        buf += "');\n  return buf.join('');\n })();";
+        buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {\n  var buf=[];";
+        buf += "\n  buf.push('";
+        js = '';
+      }
       if (0 == js.trim().indexOf('include')) {
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for includes');
-        var path = resolveInclude(name, filename);
+        var path = resolveFile(name, filename);
         include = read(path, 'utf8');
         include = exports.parse(include, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
         buf += "' + (function(){" + include + "})() + '";
@@ -242,6 +292,10 @@ var parse = exports.parse = function(str, options){
     }
   }
 
+  if (layout) {
+    buf += "');\n  return buf.join('');\n })();";
+    buf += "\n buf.push((function() {" + layout + "\n })() + '";
+  }
   if (false !== options._with) buf += "'); })();\n} \nreturn buf.join('');";
   else buf += "');\nreturn buf.join('');";
   return buf;
@@ -371,7 +425,7 @@ exports.renderFile = function(path, options, fn){
 };
 
 /**
- * Resolve include `name` relative to `filename`.
+ * Resolve file `name` relative to `filename`.
  *
  * @param {String} name
  * @param {String} filename
@@ -379,7 +433,7 @@ exports.renderFile = function(path, options, fn){
  * @api private
  */
 
-function resolveInclude(name, filename) {
+function resolveFile(name, filename) {
   var path = join(dirname(filename), name);
   var ext = extname(name);
   if (!ext) path += '.ejs';
@@ -614,34 +668,6 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
-};
- 
-
-}); // module: utils.js
 
  return require("ejs");
 })();
