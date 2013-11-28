@@ -193,7 +193,6 @@ var parse = exports.parse = function(str, options){
     , buf = "";
 
   buf += 'var buf = [];';
-  if (false !== options._blocks) buf += '\nvar blocks = {};';
   if (false !== options._with) buf += '\nwith (locals || {}) { (function(){ ';
   buf += '\n buf.push(\'';
 
@@ -201,7 +200,7 @@ var parse = exports.parse = function(str, options){
 
   var consumeEOL = false;
 
-  var extend = null;
+  var extendPath = null;
 
   for (var i = 0, len = str.length; i < len; ++i) {
     var stri = str[i];
@@ -228,7 +227,6 @@ var parse = exports.parse = function(str, options){
       var end = str.indexOf(close, i)
         , js = str.substring(i, end)
         , start = i
-        , include = null
         , n = 0;
 
       if ('-' == js[js.length-1]){
@@ -239,28 +237,20 @@ var parse = exports.parse = function(str, options){
       if (0 == js.trim().indexOf('extend')) {
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for extensions');
-        var path = resolveFile(name, filename);
-        extend = read(path, 'utf8');
-        extend = exports.parse(extend, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false });
-        buf += "');";
-        buf += "\n if (!blocks['default']) blocks['default'] = (function() {\n  var buf=[];";
-        buf += "\n  buf.push('";
+        extendPath = resolveFile(name, filename);
+        buf += extend({ _blocks: options._blocks !== false });
         js = '';
       }
-      if (extend && true == /^block\s/.test(js.trim())) {
+      if (true == /^block\s/.test(js.trim())) {
         var name = js.trim().slice(5).trim();
-        buf += "');\n  return buf.join('');\n })();";
-        buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {\n  var buf=[];";
-        buf += "\n  buf.push('";
+        buf += block(name);
         js = '';
       }
       if (0 == js.trim().indexOf('include')) {
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for includes');
         var path = resolveFile(name, filename);
-        include = read(path, 'utf8');
-        include = exports.parse(include, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
-        buf += "' + (function(){" + include + "})() + '";
+        buf += include(path, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
         js = '';
       }
 
@@ -292,9 +282,8 @@ var parse = exports.parse = function(str, options){
     }
   }
 
-  if (extend) {
-    buf += "');\n  return buf.join('');\n })();";
-    buf += "\n buf.push((function() {" + extend + "\n })() + '";
+  if (extendPath) {
+    buf += endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false });
   }
   if (false !== options._with) buf += "'); })();\n} \nreturn buf.join('');";
   else buf += "');\nreturn buf.join('');";
@@ -423,6 +412,76 @@ exports.renderFile = function(path, options, fn){
   }
   fn(null, exports.render(str, options));
 };
+
+/**
+ * Mark template to use extend and blocks
+ *
+ * @return {String}
+ * @api private
+ */
+function extend(options) {
+  var options = options || {}
+    , buf = "');";
+  if (false !== options._blocks) {
+    buf += "\nvar blocks = {};";
+  }
+  buf += "\n" + block('default', { _endblock: false });
+  return buf;
+}
+
+/**
+ * Render an EJS layout file at given `path`
+ *
+ * @param {String} path
+ * @param {Object} options
+ * @return {String}
+ * @api private
+ */
+function endextend(path, options) {
+  return endblock() + "\n buf.push('" + include(path, options);
+}
+
+/**
+ * Render a block with the given `name`
+ *
+ * @param {String} name
+ * @return {String}
+ * @api private
+ */
+function block(name, options) {
+  var options = options || {}
+    , buf = "";
+  if (options._endblock !== false) {
+    buf += endblock();
+  }
+  buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {";
+  buf += "\n  var buf=[];\n  buf.push('";
+  return buf;
+}
+
+/**
+ * Close block rendering
+ *
+ * @return {String}
+ * @api private
+ */
+function endblock() {
+  return "');\n  return buf.join('');\n })();";
+}
+
+/**
+ * Include an EJS file at given `path`
+ *
+ * @param {String} path
+ * @param {Object} options
+ * @return {String}
+ * @api private
+ */
+function include(path, options) {
+  var include = read(path, 'utf8');
+  include = exports.parse(include, options);
+  return "' + (function(){" + include + "})() + '";
+}
 
 /**
  * Resolve file `name` relative to `filename`.
