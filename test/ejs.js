@@ -335,6 +335,36 @@ describe('layout', function() {
       preFn({ pets: users });
     }).should.not.throw();
   })
+
+  it('should throw exception if block opened inside block', function(){
+    try {
+      var file = 'test/fixtures/layout-fail-block.ejs';
+      ejs.compile(fixture('layout-fail-block.ejs'), { filename: file, pets: users });
+    } catch (err) {
+      err.message.should.include('block found');
+      return;
+    }
+
+    assert(false, 'opening a new block before closing the last one should throw an error');
+  })
+
+  it('should throw exception if EOF encountered inside block', function(){
+    try {
+      var file = 'test/fixtures/layout-fail-eof.ejs';
+      ejs.compile(fixture('layout-fail-eof.ejs'), { filename: file, pets: users });
+    } catch (err) {
+      err.message.should.include('eof found');
+      return;
+    }
+
+    assert(false, 'ending the file before closing a block should throw an error');
+  })
+
+  it('should use a default block', function(){
+    var file = 'test/fixtures/layout-default.ejs';
+    ejs.render(fixture('layout-default.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('layout-default.html'))
+  })
 })
 
 describe('comments', function() {

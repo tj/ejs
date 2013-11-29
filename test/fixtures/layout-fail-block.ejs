@@ -1,6 +1,5 @@
-<% extend layout-frame -%>
-<% block title -%>Page Title<% endblock -%>
-<% block content -%>
+<% extend layout-page -%>
+<% block title -%>Page Title<% block page -%>
 <ul>
   <% pets.forEach(function(pet){ -%>
   <li><%= pet.name %></li>

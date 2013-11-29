@@ -197,7 +197,8 @@ function rethrow(err, str, filename, lineno){
 /**
  * Channel identifiers
  */
-const MAIN = 0;
+const MAIN = 0
+  , DEFAULT = 1;
 
 /**
  * Parse the given `str` of ejs, returning the function body.
@@ -224,7 +225,8 @@ var parse = exports.parse = function(str, options){
 
   var consumeEOL = false;
 
-  var extendPath = null;
+  var extendPath = null
+    , blockName = null;
 
   for (var i = 0, len = str.length; i < len; ++i) {
     var stri = str[i];
@@ -263,11 +265,20 @@ var parse = exports.parse = function(str, options){
         if (!filename) throw new Error('filename option is required for extensions');
         extendPath = resolveFile(name, filename);
         buf.push(extend({ _blocks: options._blocks !== false }));
+        buf = channels[DEFAULT] = new Channel();
         js = '';
       }
       if (true == /^block\s/.test(js.trim())) {
-        var name = js.trim().slice(5).trim();
-        buf.push(block(name));
+        if (blockName) throw new Error('expecting endblock, block found');
+        blockName = js.trim().slice(5).trim();
+        buf = channels[MAIN];
+        buf.push(block(blockName));
+        js = '';
+      }
+      if (0 == js.trim().indexOf('endblock')) {
+        blockName = null;
+        buf.push(endblock());
+        buf = channels[DEFAULT];
         js = '';
       }
       if (0 == js.trim().indexOf('include')) {
@@ -306,7 +317,14 @@ var parse = exports.parse = function(str, options){
     }
   }
 
-  if (extendPath) buf.push(endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
+  if (extendPath) {
+    if (blockName) throw new Error('expecting endblock, eof found');
+    buf = channels[MAIN];
+    buf.push(block('default'));
+    buf.push(channels[DEFAULT].toString());
+    buf.push(endblock());
+    buf.push(endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
+  }
   if (false !== options._with) buf.push("'); })();\n} \nreturn buf.join('');");
   else buf.push("');\nreturn buf.join('');");
   return buf.toString();
@@ -443,11 +461,13 @@ exports.renderFile = function(path, options, fn){
  */
 function extend(options) {
   var options = options || {}
-    , buf = "');";
+    , buf = "";
+
+  buf += "');";
   if (false !== options._blocks) {
-    buf += "\nvar blocks = {};";
+    buf += "\n var blocks = {};";
   }
-  buf += "\n" + block('default', { _endblock: false });
+
   return buf;
 }
 
@@ -460,7 +480,7 @@ function extend(options) {
  * @api private
  */
 function endextend(path, options) {
-  return endblock() + "\n buf.push('" + include(path, options);
+  return "\n buf.push('" + include(path, options);
 }
 
 /**
@@ -470,12 +490,8 @@ function endextend(path, options) {
  * @return {String}
  * @api private
  */
-function block(name, options) {
-  var options = options || {}
-    , buf = "";
-  if (options._endblock !== false) {
-    buf += endblock();
-  }
+function block(name) {
+  var buf = "";
   buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {";
   buf += "\n  var buf=[];\n  buf.push('";
   return buf;
