@@ -50,49 +50,47 @@ require.relative = function (parent) {
 
 
 require.register("Channel.js", function(module, exports, require){
+/*!
+ * EJS - Filters
+ * Copyright(c) 2013 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
 module.exports = exports = Channel;
+
+/**
+ * Represents a channel to buffer a template in
+ *
+ * @constructor
+ */
 
 function Channel() {
 	this.buf = '';
 };
 
+/**
+ * Push `str` into buffer
+ *
+ * @param {String} str
+ * @api public
+ */
+
 Channel.prototype.push = function(str) {
 	this.buf += str;
 }
+
+/**
+ * Return the string contents of the buffer
+ * 
+ * @return {String}
+ * @api public
+ */
 
 Channel.prototype.toString = function() {
 	return this.buf;
 }
 
 }); // module: Channel.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
-};
- 
-
-}); // module: utils.js
 
 require.register("ejs.js", function(module, exports, require){
 
@@ -196,6 +194,8 @@ function rethrow(err, str, filename, lineno){
 
 /**
  * Channel identifiers
+ *
+ * @type {number}
  */
 const MAIN = 0
   , DEFAULT = 1;
@@ -765,6 +765,34 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
+
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
 
  return require("ejs");
 })();
