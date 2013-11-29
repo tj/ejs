@@ -49,6 +49,23 @@ require.relative = function (parent) {
   };
 
 
+require.register("Channel.js", function(module, exports, require){
+module.exports = exports = Channel;
+
+function Channel() {
+	this.buf = '';
+};
+
+Channel.prototype.push = function(str) {
+	this.buf += str;
+}
+
+Channel.prototype.toString = function() {
+	return this.buf;
+}
+
+}); // module: Channel.js
+
 require.register("utils.js", function(module, exports, require){
 
 /*!
@@ -90,6 +107,7 @@ require.register("ejs.js", function(module, exports, require){
  */
 
 var utils = require('./utils')
+  , Channel = require('./Channel')
   , path = require('path')
   , dirname = path.dirname
   , extname = path.extname
@@ -177,6 +195,11 @@ function rethrow(err, str, filename, lineno){
 }
 
 /**
+ * Channel identifiers
+ */
+const MAIN = 0;
+
+/**
  * Parse the given `str` of ejs, returning the function body.
  *
  * @param {String} str
@@ -190,11 +213,12 @@ var parse = exports.parse = function(str, options){
     , close = options.close || exports.close || '%>'
     , filename = options.filename
     , compileDebug = options.compileDebug !== false
-    , buf = "";
+    , channels = []
+    , buf = channels[MAIN] = new Channel();
 
-  buf += 'var buf = [];';
-  if (false !== options._with) buf += '\nwith (locals || {}) { (function(){ ';
-  buf += '\n buf.push(\'';
+  buf.push('var buf = [];');
+  if (false !== options._with) buf.push('\nwith (locals || {}) { (function(){ ');
+  buf.push('\n buf.push(\'');
 
   var lineno = 1;
 
@@ -238,19 +262,19 @@ var parse = exports.parse = function(str, options){
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for extensions');
         extendPath = resolveFile(name, filename);
-        buf += extend({ _blocks: options._blocks !== false });
+        buf.push(extend({ _blocks: options._blocks !== false }));
         js = '';
       }
       if (true == /^block\s/.test(js.trim())) {
         var name = js.trim().slice(5).trim();
-        buf += block(name);
+        buf.push(block(name));
         js = '';
       }
       if (0 == js.trim().indexOf('include')) {
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for includes');
         var path = resolveFile(name, filename);
-        buf += include(path, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
+        buf.push(include(path, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug }));
         js = '';
       }
 
@@ -258,36 +282,34 @@ var parse = exports.parse = function(str, options){
       if (js.substr(0, 1) == ':') js = filtered(js);
       if (js) {
         if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
-        buf += prefix;
-        buf += js;
-        buf += postfix;
+        buf.push(prefix);
+        buf.push(js);
+        buf.push(postfix);
       }
       i += end - start + close.length - 1;
 
     } else if (stri == "\\") {
-      buf += "\\\\";
+      buf.push("\\\\");
     } else if (stri == "'") {
-      buf += "\\'";
+      buf.push("\\'");
     } else if (stri == "\r") {
       // ignore
     } else if (stri == "\n") {
       if (consumeEOL) {
         consumeEOL = false;
       } else {
-        buf += "\\n";
+        buf.push("\\n");
         lineno++;
       }
     } else {
-      buf += stri;
+      buf.push(stri);
     }
   }
 
-  if (extendPath) {
-    buf += endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false });
-  }
-  if (false !== options._with) buf += "'); })();\n} \nreturn buf.join('');";
-  else buf += "');\nreturn buf.join('');";
-  return buf;
+  if (extendPath) buf.push(endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
+  if (false !== options._with) buf.push("'); })();\n} \nreturn buf.join('');");
+  else buf.push("');\nreturn buf.join('');");
+  return buf.toString();
 };
 
 /**
