@@ -359,12 +359,6 @@ describe('layout', function() {
 
     assert(false, 'ending the file before closing a block should throw an error');
   })
-
-  it('should use a default block', function(){
-    var file = 'test/fixtures/layout-default.ejs';
-    ejs.render(fixture('layout-default.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-default.html'))
-  })
 })
 
 describe('comments', function() {

@@ -92,6 +92,34 @@ Channel.prototype.toString = function() {
 
 }); // module: Channel.js
 
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
+
 require.register("ejs.js", function(module, exports, require){
 
 /*!
@@ -198,7 +226,7 @@ function rethrow(err, str, filename, lineno){
  * @type {number}
  */
 const MAIN = 0
-  , DEFAULT = 1;
+  , HIDDEN = 99;
 
 /**
  * Parse the given `str` of ejs, returning the function body.
@@ -265,7 +293,7 @@ var parse = exports.parse = function(str, options){
         if (!filename) throw new Error('filename option is required for extensions');
         extendPath = resolveFile(name, filename);
         buf.push(extend({ _blocks: options._blocks !== false }));
-        buf = channels[DEFAULT] = new Channel();
+        buf = channels[HIDDEN] = new Channel();
         js = '';
       }
       if (true == /^block\s/.test(js.trim())) {
@@ -278,7 +306,7 @@ var parse = exports.parse = function(str, options){
       if (0 == js.trim().indexOf('endblock')) {
         blockName = null;
         buf.push(endblock());
-        buf = channels[DEFAULT];
+        buf = channels[HIDDEN];
         js = '';
       }
       if (0 == js.trim().indexOf('include')) {
@@ -320,9 +348,6 @@ var parse = exports.parse = function(str, options){
   if (extendPath) {
     if (blockName) throw new Error('expecting endblock, eof found');
     buf = channels[MAIN];
-    buf.push(block('default'));
-    buf.push(channels[DEFAULT].toString());
-    buf.push(endblock());
     buf.push(endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
   }
   if (false !== options._with) buf.push("'); })();\n} \nreturn buf.join('');");
@@ -765,34 +790,6 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
-};
- 
-
-}); // module: utils.js
 
  return require("ejs");
 })();
