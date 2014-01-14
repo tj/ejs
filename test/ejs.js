@@ -149,12 +149,20 @@ describe('<%=', function(){
     ejs.render('<%= name %>', { name: "&foo_bar;" })
       .should.equal('&amp;foo_bar;');
   })
+  it("should remove trailing \";\"", function(){
+    ejs.render('<%= foo; %>', { foo: "bar"})
+      .should.equal('bar');
+  })
 })
 
 describe('<%-', function(){
   it('should not escape', function(){
     ejs.render('<%- name %>', { name: '<script>' })
       .should.equal('<script>');
+  })
+  it("should remove trailing \";\"", function(){
+    ejs.render('<%- foo; %>', { foo: "bar"})
+      .should.equal('bar');
   })
 })
 
