@@ -301,6 +301,12 @@ describe('includes', function(){
       .should.equal(fixture('include.css.html'));
   })
 
+  it('should allow dynamic includes', function (){
+	var file = 'test/fixtures/dynamic1.ejs';
+	ejs.render(fixture('dynamic1.ejs'), {filename : file, dynamicTemplate : 'dynamic2'})
+	  .should.equal(fixture('dynamic.html'));
+  });
+
   it('should pass compileDebug to include', function(){
     var file = 'test/fixtures/include.ejs';
     var fn = ejs.compile(fixture('include.ejs'), { filename: file, open: '[[', close: ']]', compileDebug: false, client: true })

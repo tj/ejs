@@ -50,7 +50,6 @@ require.relative = function (parent) {
 
 
 require.register("ejs.js", function(module, exports, require){
-
 /*!
  * EJS
  * Copyright(c) 2012 TJ Holowaychuk <tj@vision-media.ca>
@@ -209,18 +208,34 @@ var parse = exports.parse = function(str, options){
         consumeEOL = true;
       }
 
-      if (0 == js.trim().indexOf('include')) {
-        var name = js.trim().slice(7).trim();
+       if (0 == js.trim().indexOf('include')) {
+        var optionName = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for includes');
+
+        // If the options provided to include is a variable in scope
+        // use the value of that variable.
+        var name = options[optionName] || optionName;
         var path = resolveInclude(name, filename);
         include = read(path, 'utf8');
-        include = exports.parse(include, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
+        include = exports.parse(include, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug }); 
         buf += "' + (function(){" + include + "})() + '";
         js = '';
       }
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
-      if (js.substr(0, 1) == ':') js = filtered(js);
+      
+      switch(js.substr(0, 1)) {
+        case ':':
+          js = filtered(js);
+          break;
+        case '%':
+          js = " buf.push('<%" + js.substring(1).replace(/'/g, "\\'") + "%>');";
+          break;
+        case '#':
+          js = "";
+          break;
+      }
+      
       if (js) {
         if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
         buf += prefix;
