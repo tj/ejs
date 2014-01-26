@@ -67,6 +67,17 @@ Embedded JavaScript templates.
 </ul>
 ```
 
+  You can use absolute paths using string "my/path". the path will be relative
+  to the app folder.
+
+```
+<ul>
+  <% users.forEach(function(user){ %>
+    <% include "views/user/show" %>
+  <% }) %>
+</ul>
+```
+
 ## Custom delimiters
 
 Custom delimiters can also be applied globally:

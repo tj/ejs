@@ -264,7 +264,7 @@ describe('includes', function(){
       .should.equal(fixture('include.html'));
   })
 
-  it('should work when nested', function(){
+  it('should work when nested or absolute', function(){
     var file = 'test/fixtures/menu.ejs';
     ejs.render(fixture('menu.ejs'), { filename: file, pets: users })
       .should.equal(fixture('menu.html'));
