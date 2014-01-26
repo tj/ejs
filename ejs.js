@@ -380,7 +380,11 @@ exports.renderFile = function(path, options, fn){
  */
 
 function resolveInclude(name, filename) {
-  var path = join(dirname(filename), name);
+  if (name[0].match(/(\'|\")/)) { //use absolute path if "path/"
+    name = name.replace(/(\'|\")/ig,"");
+    var dir = process.cwd();
+  };
+  var path = join((dir || dirname(filename)), name);
   var ext = extname(name);
   if (!ext) path += '.ejs';
   return path;
