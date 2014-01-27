@@ -67,13 +67,12 @@ Embedded JavaScript templates.
 </ul>
 ```
 
-  You can use absolute paths using string "my/path". the path will be relative
-  to the app folder.
+  Starting with "/" will drive you to the absolute path.
 
 ```
 <ul>
   <% users.forEach(function(user){ %>
-    <% include "views/user/show" %>
+    <% include /views/user/show %>
   <% }) %>
 </ul>
 ```
