@@ -242,19 +242,18 @@ var parse = exports.parse = function(str, options){
     , close = options.close || exports.close || '%>'
     , filename = options.filename
     , compileDebug = options.compileDebug !== false
-    , channels = []
-    , buf = channels[MAIN] = new Channel();
+    , scope = {};
 
-  buf.push('var buf = [];');
-  if (false !== options._with) buf.push('\nwith (locals || {}) { (function(){ ');
-  buf.push('\n buf.push(\'');
+  scope.channels = [];
+  scope.buf = scope.channels[MAIN] = new Channel();
+
+  scope.buf.push('var buf = [];');
+  if (false !== options._with) scope.buf.push('\nwith (locals || {}) { (function(){ ');
+  scope.buf.push('\n buf.push(\'');
 
   var lineno = 1;
 
   var consumeEOL = false;
-
-  var extendPath = null
-    , blockName = null;
 
   for (var i = 0, len = str.length; i < len; ++i) {
     var stri = str[i];
@@ -288,71 +287,44 @@ var parse = exports.parse = function(str, options){
         consumeEOL = true;
       }
 
-      if (0 == js.trim().indexOf('extend')) {
-        var name = js.trim().slice(7).trim();
-        if (!filename) throw new Error('filename option is required for extensions');
-        extendPath = resolveFile(name, filename);
-        buf.push(extend({ _blocks: options._blocks !== false }));
-        buf = channels[HIDDEN] = new Channel();
-        js = '';
-      }
-      if (true == /^block\s/.test(js.trim())) {
-        if (blockName) throw new Error('expecting endblock, block found');
-        blockName = js.trim().slice(5).trim();
-        buf = channels[MAIN];
-        buf.push(block(blockName));
-        js = '';
-      }
-      if (0 == js.trim().indexOf('endblock')) {
-        blockName = null;
-        buf.push(endblock());
-        buf = channels[HIDDEN];
-        js = '';
-      }
-      if (0 == js.trim().indexOf('include')) {
-        var name = js.trim().slice(7).trim();
-        if (!filename) throw new Error('filename option is required for includes');
-        var path = resolveFile(name, filename);
-        buf.push(include(path, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug }));
-        js = '';
-      }
+      js = commands(js, scope, { filename: filename, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: options._blocks !== false });
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);
       if (js) {
         if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
-        buf.push(prefix);
-        buf.push(js);
-        buf.push(postfix);
+        scope.buf.push(prefix);
+        scope.buf.push(js);
+        scope.buf.push(postfix);
       }
       i += end - start + close.length - 1;
 
     } else if (stri == "\\") {
-      buf.push("\\\\");
+      scope.buf.push("\\\\");
     } else if (stri == "'") {
-      buf.push("\\'");
+      scope.buf.push("\\'");
     } else if (stri == "\r") {
       // ignore
     } else if (stri == "\n") {
       if (consumeEOL) {
         consumeEOL = false;
       } else {
-        buf.push("\\n");
+        scope.buf.push("\\n");
         lineno++;
       }
     } else {
-      buf.push(stri);
+      scope.buf.push(stri);
     }
   }
 
-  if (extendPath) {
-    if (blockName) throw new Error('expecting endblock, eof found');
-    buf = channels[MAIN];
-    buf.push(endextend(extendPath, { filename: extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
+  if (scope.extendPath) {
+    if (scope.blockName) throw new Error('expecting endblock, eof found');
+    scope.buf = scope.channels[MAIN];
+    scope.buf.push(endextend(scope.extendPath, { filename: scope.extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
   }
-  if (false !== options._with) buf.push("'); })();\n} \nreturn buf.join('');");
-  else buf.push("');\nreturn buf.join('');");
-  return buf.toString();
+  if (false !== options._with) scope.buf.push("'); })();\n} \nreturn buf.join('');");
+  else scope.buf.push("');\nreturn buf.join('');");
+  return scope.buf.toString();
 };
 
 /**
@@ -477,6 +449,47 @@ exports.renderFile = function(path, options, fn){
   }
   fn(null, exports.render(str, options));
 };
+
+/**
+ * Handle template commands.
+ *
+ * @param {String} js
+ * @param {Object} scope
+ * @param {Object} options
+ * @return {String}
+ * @api private
+ */
+function commands(js, scope, options) {
+  var command = js.trim();
+
+  switch(true) {
+    case /^extend\s/.test(command):
+      var name = js.trim().slice(7).trim();
+      if (!options.filename) throw new Error('filename option is required for extensions');
+      scope.extendPath = resolveFile(name, options.filename);
+      scope.buf.push(extend({ _blocks: options._blocks }));
+      scope.buf = scope.channels[HIDDEN] = new Channel();
+      return '';
+    case /^block\s/.test(command):
+      if (scope.blockName) throw new Error('expecting endblock, block found');
+      scope.blockName = js.trim().slice(5).trim();
+      scope.buf = scope.channels[MAIN];
+      scope.buf.push(block(scope.blockName));
+      return '';
+    case /^endblock$/.test(command):
+      scope.blockName = null;
+      scope.buf.push(endblock());
+      scope.buf = scope.channels[HIDDEN];
+      return '';
+    case /^include\s/.test(command):
+      var name = js.trim().slice(7).trim();
+      if (!options.filename) throw new Error('filename option is required for includes');
+      var path = resolveFile(name, options.filename);
+      scope.buf.push(include(path, { filename: path, _with: false, open: options.open, close: options.close, compileDebug: options.compileDebug }));
+      return '';
+  }
+  return js;
+}
 
 /**
  * Mark template to use extend and blocks
