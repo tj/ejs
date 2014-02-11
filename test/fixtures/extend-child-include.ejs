@@ -1,9 +1,9 @@
-<% extend layout-page -%>
+<% extend extend-page -%>
 <% block title -%>Page Title<% endblock %>
 <% block page -%>
 <ul>
   <% pets.forEach(function(pet){ -%>
-    <% include layout-pet %>
+    <% include extend-pet %>
   <% }) -%>
 </ul>
 <% endblock %>

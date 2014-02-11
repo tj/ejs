@@ -288,46 +288,46 @@ describe('includes', function(){
   })
 })
 
-describe('layout', function() {
-  it('should include layout', function(){
-    var file = 'test/fixtures/layout.ejs';
-    ejs.render(fixture('layout.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout.html'))
+describe('extend', function() {
+  it('should extend template', function(){
+    var file = 'test/fixtures/extend-child.ejs';
+    ejs.render(fixture('extend-child.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-child.html'))
   })
 
   it('should work when nested', function(){
-    var file = 'test/fixtures/layout-nested.ejs';
-    ejs.render(fixture('layout-nested.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-nested.html'))
+    var file = 'test/fixtures/extend-nested.ejs';
+    ejs.render(fixture('extend-nested.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-nested.html'))
   })
 
   it('should override parent block', function(){
-    var file = 'test/fixtures/layout-override.ejs';
-    ejs.render(fixture('layout-override.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-override.html'))
+    var file = 'test/fixtures/extend-override.ejs';
+    ejs.render(fixture('extend-override.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-override.html'))
   })
 
-  it('should work with includes in blocks', function(){
-    var file = 'test/fixtures/layout-include-block.ejs';
-    ejs.render(fixture('layout-include-block.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-include-block.html'))
+  it('should work with includes in child template', function(){
+    var file = 'test/fixtures/extend-child-include.ejs';
+    ejs.render(fixture('extend-child-include.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-child-include.html'))
   })
 
-  it('should work with includes in layouts', function(){
-    var file = 'test/fixtures/layout-include-layout.ejs';
-    ejs.render(fixture('layout-include-layout.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-include-layout.html'))
+  it('should work with includes in parent template', function(){
+    var file = 'test/fixtures/extend-parent-include.ejs';
+    ejs.render(fixture('extend-parent-include.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-parent-include.html'))
   })
 
   it('should work when included', function(){
-    var file = 'test/fixtures/layout-included.ejs';
-    ejs.render(fixture('layout-included.ejs'), { filename: file, pets: users })
-      .should.equal(fixture('layout-included.html'))
+    var file = 'test/fixtures/extend-included.ejs';
+    ejs.render(fixture('extend-included.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-included.html'))
   })
 
-  it('should pass compileDebug to layout', function(){
-    var file = 'test/fixtures/layout.ejs';
-    var fn = ejs.compile(fixture('layout.ejs'), { filename: file, open: '[[', close: ']]', compileDebug: false, client: true })
+  it('should pass compileDebug to parent template', function(){
+    var file = 'test/fixtures/extend-child.ejs';
+    var fn = ejs.compile(fixture('extend-child.ejs'), { filename: file, open: '[[', close: ']]', compileDebug: false, client: true })
     var str = fn.toString();
     eval('var preFn = ' + str);
     str.should.not.match(/__stack/);
@@ -338,8 +338,8 @@ describe('layout', function() {
 
   it('should throw exception if block opened inside block', function(){
     try {
-      var file = 'test/fixtures/layout-fail-block.ejs';
-      ejs.compile(fixture('layout-fail-block.ejs'), { filename: file, pets: users });
+      var file = 'test/fixtures/extend-fail-block.ejs';
+      ejs.compile(fixture('extend-fail-block.ejs'), { filename: file, pets: users });
     } catch (err) {
       err.message.should.include('block found');
       return;
@@ -350,8 +350,8 @@ describe('layout', function() {
 
   it('should throw exception if EOF encountered inside block', function(){
     try {
-      var file = 'test/fixtures/layout-fail-eof.ejs';
-      ejs.compile(fixture('layout-fail-eof.ejs'), { filename: file, pets: users });
+      var file = 'test/fixtures/extend-fail-eof.ejs';
+      ejs.compile(fixture('extend-fail-eof.ejs'), { filename: file, pets: users });
     } catch (err) {
       err.message.should.include('eof found');
       return;
