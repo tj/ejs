@@ -128,32 +128,32 @@ describe('ejs.renderFile(path, options, fn)', function(){
   })
 })
 
-describe('<%=', function(){
+describe('<%-', function(){
   it('should escape <script>', function(){
-    ejs.render('<%= name %>', { name: '<script>' })
+    ejs.render('<%- name %>', { name: '<script>' })
       .should.equal('&lt;script&gt;');
   })
   it("should escape '", function(){
-    ejs.render('<%= name %>', { name: "The Jones's" })
+    ejs.render('<%- name %>', { name: "The Jones's" })
       .should.equal('The Jones&#39;s');
   })
   it("shouldn't escape &amp;", function(){
-    ejs.render('<%= name %>', { name: "Us &amp; Them" })
+    ejs.render('<%- name %>', { name: "Us &amp; Them" })
       .should.equal('Us &amp; Them');
   })
   it("shouldn't escape &#93;", function(){
-    ejs.render('<%= name %>', { name: "The Jones&#39;s" })
+    ejs.render('<%- name %>', { name: "The Jones&#39;s" })
       .should.equal('The Jones&#39;s');
   })
   it("should escape &foo_bar;", function(){
-    ejs.render('<%= name %>', { name: "&foo_bar;" })
+    ejs.render('<%- name %>', { name: "&foo_bar;" })
       .should.equal('&amp;foo_bar;');
   })
 })
 
-describe('<%-', function(){
+describe('<%=', function(){
   it('should not escape', function(){
-    ejs.render('<%- name %>', { name: '<script>' })
+    ejs.render('<%= name %>', { name: '<script>' })
       .should.equal('<script>');
   })
 })
