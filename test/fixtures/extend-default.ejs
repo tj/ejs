@@ -1,0 +1,8 @@
+<% extend extend-default-parent -%>
+<% block page -%>
+<ul>
+  <% pets.forEach(function(pet){ -%>
+  <li><%= pet.name %></li>
+  <% }) -%>
+</ul>
+<% endblock -%>

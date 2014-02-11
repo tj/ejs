@@ -134,6 +134,7 @@ require.register("ejs.js", function(module, exports, require){
 
 var utils = require('./utils')
   , Channel = require('./Channel')
+  , Stack = require('./Stack')
   , path = require('path')
   , dirname = path.dirname
   , extname = path.extname
@@ -221,11 +222,13 @@ function rethrow(err, str, filename, lineno){
 }
 
 /**
- * Channel identifiers
+ * Identifiers
  *
  * @type {number}
  */
 const MAIN = 0
+  , EXTEND = 1
+  , BLOCK = 2
   , HIDDEN = 99;
 
 /**
@@ -242,12 +245,19 @@ var parse = exports.parse = function(str, options){
     , close = options.close || exports.close || '%>'
     , filename = options.filename
     , compileDebug = options.compileDebug !== false
-    , scope = {};
+    , stack = new Stack()
+    , channels = [];
 
-  scope.channels = [];
-  scope.buf = scope.channels[MAIN] = new Channel();
+  channels[MAIN] = new Channel();
+  channels[HIDDEN] = new Channel();
+
+  var scope = stack.push({
+    type: MAIN,
+    buf: channels[MAIN]
+  });
 
   scope.buf.push('var buf = [];');
+  if (false !== options._blocks) scope.buf.push('\nvar blocks = {};');
   if (false !== options._with) scope.buf.push('\nwith (locals || {}) { (function(){ ');
   scope.buf.push('\n buf.push(\'');
 
@@ -287,7 +297,13 @@ var parse = exports.parse = function(str, options){
         consumeEOL = true;
       }
 
-      js = commands(js, scope, { filename: filename, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: options._blocks !== false });
+      js = commands(js, stack, channels, {
+        filename: filename,
+        open: open,
+        close: close,
+        compileDebug: compileDebug
+      });
+      scope = stack.scope();
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);
@@ -317,10 +333,11 @@ var parse = exports.parse = function(str, options){
     }
   }
 
-  if (scope.extendPath) {
-    if (scope.blockName) throw new Error('expecting endblock, eof found');
-    scope.buf = scope.channels[MAIN];
-    scope.buf.push(endextend(scope.extendPath, { filename: scope.extendPath, _with: false, open: open, close: close, compileDebug: compileDebug, _blocks: false }));
+  if (scope.type === BLOCK) throw new Error('expecting endblock, eof found');
+  if (scope.type === EXTEND) {
+    var path = scope.path;
+    scope = stack.pop();
+    scope.buf.push(endextend(path, { filename: path, _with: false, _blocks: false, open: open, close: close, compileDebug: compileDebug }));
   }
   if (false !== options._with) scope.buf.push("'); })();\n} \nreturn buf.join('');");
   else scope.buf.push("');\nreturn buf.join('');");
@@ -455,37 +472,46 @@ exports.renderFile = function(path, options, fn){
  *
  * @param {String} js
  * @param {Object} scope
+ * @param {Array} stack
+ * @param {Array} channels
  * @param {Object} options
  * @return {String}
  * @api private
  */
-function commands(js, scope, options) {
-  var command = js.trim();
+function commands(js, stack, channels, options) {
+  var command = js.trim()
+    , scope = stack.scope();
 
   switch(true) {
     case /^extend\s/.test(command):
       var name = js.trim().slice(7).trim();
       if (!options.filename) throw new Error('filename option is required for extensions');
-      scope.extendPath = resolveFile(name, options.filename);
-      scope.buf.push(extend({ _blocks: options._blocks }));
-      scope.buf = scope.channels[HIDDEN] = new Channel();
+      var path = resolveFile(name, options.filename);
+      scope.buf.push(extend());
+      scope = stack.push({ type: EXTEND, path: path, buf: channels[HIDDEN] });
       return '';
     case /^block\s/.test(command):
-      if (scope.blockName) throw new Error('expecting endblock, block found');
-      scope.blockName = js.trim().slice(5).trim();
-      scope.buf = scope.channels[MAIN];
-      scope.buf.push(block(scope.blockName));
+      var name = js.trim().slice(6).trim()
+        , isExtend = scope.type === EXTEND;
+      scope = stack.push({ type: BLOCK, name: name, buf: channels[MAIN] });
+      scope.buf.push(block(name, !isExtend));
       return '';
     case /^endblock$/.test(command):
-      scope.blockName = null;
-      scope.buf.push(endblock());
-      scope.buf = scope.channels[HIDDEN];
+      if (scope.type !== BLOCK) throw new Error('endblock found with no matching block');
+      var buf = scope.buf;
+      scope = stack.pop();
+      buf.push(endblock(scope.type !== EXTEND));
+      return '';
+    case /^sblock\s/.test(command):
+      var name = js.trim().slice(7).trim();
+      if (scope.type === EXTEND) throw new Error('sblock cannot be used to declare a block');
+      scope.buf.push(sblock(name));
       return '';
     case /^include\s/.test(command):
       var name = js.trim().slice(7).trim();
       if (!options.filename) throw new Error('filename option is required for includes');
       var path = resolveFile(name, options.filename);
-      scope.buf.push(include(path, { filename: path, _with: false, open: options.open, close: options.close, compileDebug: options.compileDebug }));
+      scope.buf.push(include(path, { filename: path, open: options.open, close: options.close, compileDebug: options.compileDebug }));
       return '';
   }
   return js;
@@ -498,14 +524,8 @@ function commands(js, scope, options) {
  * @api private
  */
 function extend(options) {
-  var options = options || {}
-    , buf = "";
-
+  var buf = "";
   buf += "');";
-  if (false !== options._blocks) {
-    buf += "\n var blocks = {};";
-  }
-
   return buf;
 }
 
@@ -528,9 +548,10 @@ function endextend(path, options) {
  * @return {String}
  * @api private
  */
-function block(name) {
+function block(name, embed) {
   var buf = "";
-  buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {";
+  if (embed) buf += "', blocks['" + name + "'] || (function() {";
+  else buf += "\n if (!blocks['" + name + "']) blocks['" + name + "'] = (function() {";
   buf += "\n  var buf=[];\n  buf.push('";
   return buf;
 }
@@ -541,8 +562,23 @@ function block(name) {
  * @return {String}
  * @api private
  */
-function endblock() {
-  return "');\n  return buf.join('');\n })();";
+function endblock(embed) {
+  var buf = "";
+  buf += "');\n  return buf.join('');\n })()";
+  if (embed) buf += ", '";
+  else buf += ";";
+  return buf;
+}
+
+/**
+ * Embed a block with the given `name`
+ *
+ * @param {String} name
+ * @return {String}
+ * @api private
+ */
+function sblock(name) {
+  return "', blocks['" + name + "'] || '', '";
 }
 
 /**
@@ -803,6 +839,64 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
+
+require.register("Stack.js", function(module, exports, require){
+/*!
+ * EJS - Filters
+ * Copyright(c) 2013 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+module.exports = exports = Stack;
+
+/**
+ * Represents a stack of template scopes
+ *
+ * @constructor
+ */
+
+function Stack() {
+	this.stack = [];
+};
+
+/**
+ * Get the top-most scope
+ *
+ * @param {String} str
+ * @api public
+ */
+
+Stack.prototype.scope = function() {
+	return this.stack[this.stack.length-1];
+};
+
+/**
+ * Push `scope` into stack
+ *
+ * @param {object} scope
+ * @return {object}
+ * @api public
+ */
+
+Stack.prototype.push = function(scope) {
+	this.stack.push(scope);
+	return this.scope();
+};
+
+/**
+ * Pop `scope` from stack
+ *
+ * @param {object} scope
+ * @return {object}
+ * @api public
+ */
+
+Stack.prototype.pop = function() {
+	this.stack.pop();
+	return this.scope();
+};
+
+}); // module: Stack.js
 
  return require("ejs");
 })();

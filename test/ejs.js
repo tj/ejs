@@ -336,16 +336,22 @@ describe('extend', function() {
     }).should.not.throw();
   })
 
-  it('should throw exception if block opened inside block', function(){
-    try {
-      var file = 'test/fixtures/extend-fail-block.ejs';
-      ejs.compile(fixture('extend-fail-block.ejs'), { filename: file, pets: users });
-    } catch (err) {
-      err.message.should.include('block found');
-      return;
-    }
+  it('should use default content', function(){
+    var file = 'test/fixtures/extend-default.ejs';
+    ejs.render(fixture('extend-default.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-default.html'))
+  })
 
-    assert(false, 'opening a new block before closing the last one should throw an error');
+  it('should override default content', function(){
+    var file = 'test/fixtures/extend-default-override.ejs';
+    ejs.render(fixture('extend-default-override.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-default-override.html'))
+  })
+
+  it('should use blocks inside default', function(){
+    var file = 'test/fixtures/extend-default-nested.ejs';
+    ejs.render(fixture('extend-default-nested.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-default-nested.html'))
   })
 
   it('should throw exception if EOF encountered inside block', function(){

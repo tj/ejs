@@ -1,0 +1,9 @@
+<% extend extend-default-nested-parent -%>
+<% block heading %>Page<% endblock %>
+<% block page -%>
+<ul>
+  <% pets.forEach(function(pet){ -%>
+  <li><%= pet.name %></li>
+  <% }) -%>
+</ul>
+<% endblock -%>
