@@ -231,6 +231,19 @@ describe('filters', function(){
     ejs.render('<%=: users | map:"name" | join:"::" %>', { users: users })
       .should.equal('tobi::loki::jane');
   })
+  
+  it('should convert default values :', function(){
+    [undefined, 0, null, false, ''].forEach(function(value){
+      ejs.render('<%=: value | default:"novalue" %>', { value: value })
+        .should.equal('novalue'); 
+        
+      ejs.render('<%=: value | default %>', { value: value })
+        .should.equal('');
+    });
+    
+    ejs.render('<%=: value | default:"novalue" %>', { value: 'truthy' })
+      .should.equal('truthy');
+    });
 })
 
 describe('exceptions', function(){
