@@ -140,6 +140,15 @@ describe('<%-', function(){
     ejs.render('<%- name %>', { name: '<script>' })
       .should.equal('<script>');
   })
+
+  it('should terminate gracefully if no close tag is found', function(){
+    try {
+      ejs.compile('<h1>oops</h1><%- name ->')
+      throw new Error('Expected parse failure');
+    } catch (err) {
+      err.message.should.equal('Could not find matching close tag "%>".');      
+    }      
+  })
 })
 
 describe('%>', function(){
