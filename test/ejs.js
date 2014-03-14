@@ -130,8 +130,8 @@ describe('ejs.renderFile(path, options, fn)', function(){
 
 describe('<%=', function(){
   it('should escape', function(){
-    ejs.render('<%= name %>', { name: '<script>' })
-      .should.equal('&lt;script&gt;');
+    ejs.render('<%= name %>', { name: '&nbsp;<script>' })
+      .should.equal('&amp;nbsp;&lt;script&gt;');
   })
 })
 

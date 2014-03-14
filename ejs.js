@@ -61,17 +61,17 @@ require.register("ejs.js", function(module, exports, require){
  */
 
 var utils = require('./utils')
-  , fs = require('fs');
-
-/**
- * Library version.
- */
-
-exports.version = '0.7.2';
+  , path = require('path')
+  , basename = path.basename
+  , dirname = path.dirname
+  , extname = path.extname
+  , join = path.join
+  , fs = require('fs')
+  , read = fs.readFileSync;
 
 /**
  * Filters.
- * 
+ *
  * @type Object
  */
 
@@ -79,7 +79,7 @@ var filters = exports.filters = require('./filters');
 
 /**
  * Intermediate js cache.
- * 
+ *
  * @type Object
  */
 
@@ -107,7 +107,7 @@ function filtered(js) {
   return js.substr(1).split('|').reduce(function(js, filter){
     var parts = filter.split(':')
       , name = parts.shift()
-      , args = parts.shift() || '';
+      , args = parts.join(':') || '';
     if (args) args = ', ' + args;
     return 'filters.' + name + '(' + js + args + ')';
   });
@@ -140,9 +140,9 @@ function rethrow(err, str, filename, lineno){
 
   // Alter exception message
   err.path = filename;
-  err.message = (filename || 'ejs') + ':' 
-    + lineno + '\n' 
-    + context + '\n\n' 
+  err.message = (filename || 'ejs') + ':'
+    + lineno + '\n'
+    + context + '\n\n'
     + err.message;
   
   throw err;
@@ -159,23 +159,25 @@ function rethrow(err, str, filename, lineno){
 var parse = exports.parse = function(str, options){
   var options = options || {}
     , open = options.open || exports.open || '<%'
-    , close = options.close || exports.close || '%>';
+    , close = options.close || exports.close || '%>'
+    , filename = options.filename
+    , compileDebug = options.compileDebug !== false
+    , buf = "";
 
-  var buf = [
-      "var buf = [];"
-    , "\nwith (locals) {"
-    , "\n  buf.push('"
-  ];
-  
+  buf += 'var buf = [];';
+  if (false !== options._with) buf += '\nwith (locals || {}) { (function(){ ';
+  buf += '\n buf.push(\'';
+
   var lineno = 1;
 
   var consumeEOL = false;
   for (var i = 0, len = str.length; i < len; ++i) {
+    var stri = str[i];
     if (str.slice(i, open.length + i) == open) {
       i += open.length
   
-      var prefix, postfix, line = '__stack.lineno=' + lineno;
-      switch (str.substr(i, 1)) {
+      var prefix, postfix, line = (compileDebug ? '__stack.lineno=' : '') + lineno;
+      switch (str[i]) {
         case '=':
           prefix = "', escape((" + line + ', ';
           postfix = ")), '";
@@ -194,38 +196,55 @@ var parse = exports.parse = function(str, options){
       var end = str.indexOf(close, i)
         , js = str.substring(i, end)
         , start = i
+        , include = null
         , n = 0;
-        
+
       if ('-' == js[js.length-1]){
         js = js.substring(0, js.length - 2);
         consumeEOL = true;
       }
-        
+
+      if (0 == js.trim().indexOf('include')) {
+        var name = js.trim().slice(7).trim();
+        if (!filename) throw new Error('filename option is required for includes');
+        var path = resolveInclude(name, filename);
+        include = read(path, 'utf8');
+        include = exports.parse(include, { filename: path, _with: false, open: open, close: close, compileDebug: compileDebug });
+        buf += "' + (function(){" + include + "})() + '";
+        js = '';
+      }
+
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);
-      buf.push(prefix, js, postfix);
+      if (js) {
+        if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
+        buf += prefix;
+        buf += js;
+        buf += postfix;
+      }
       i += end - start + close.length - 1;
 
-    } else if (str.substr(i, 1) == "\\") {
-      buf.push("\\\\");
-    } else if (str.substr(i, 1) == "'") {
-      buf.push("\\'");
-    } else if (str.substr(i, 1) == "\r") {
-      buf.push(" ");
-    } else if (str.substr(i, 1) == "\n") {
+    } else if (stri == "\\") {
+      buf += "\\\\";
+    } else if (stri == "'") {
+      buf += "\\'";
+    } else if (stri == "\r") {
+      // ignore
+    } else if (stri == "\n") {
       if (consumeEOL) {
         consumeEOL = false;
       } else {
-        buf.push("\\n");
+        buf += "\\n";
         lineno++;
       }
     } else {
-      buf.push(str.substr(i, 1));
+      buf += stri;
     }
   }
 
-  buf.push("');\n}\nreturn buf.join('');");
-  return buf.join('');
+  if (false !== options._with) buf += "'); })();\n} \nreturn buf.join('');";
+  else buf += "');\nreturn buf.join('');";
+  return buf;
 };
 
 /**
@@ -239,27 +258,48 @@ var parse = exports.parse = function(str, options){
 
 var compile = exports.compile = function(str, options){
   options = options || {};
+  var escape = options.escape || utils.escape;
   
   var input = JSON.stringify(str)
+    , compileDebug = options.compileDebug !== false
+    , client = options.client
     , filename = options.filename
         ? JSON.stringify(options.filename)
         : 'undefined';
   
-  // Adds the fancy stack trace meta info
-  str = [
-    'var __stack = { lineno: 1, input: ' + input + ', filename: ' + filename + ' };',
-    rethrow.toString(),
-    'try {',
-    exports.parse(str, options),
-    '} catch (err) {',
-    '  rethrow(err, __stack.input, __stack.filename, __stack.lineno);',
-    '}'
-  ].join("\n");
+  if (compileDebug) {
+    // Adds the fancy stack trace meta info
+    str = [
+      'var __stack = { lineno: 1, input: ' + input + ', filename: ' + filename + ' };',
+      rethrow.toString(),
+      'try {',
+      exports.parse(str, options),
+      '} catch (err) {',
+      '  rethrow(err, __stack.input, __stack.filename, __stack.lineno);',
+      '}'
+    ].join("\n");
+  } else {
+    str = exports.parse(str, options);
+  }
   
   if (options.debug) console.log(str);
-  var fn = new Function('locals, filters, escape', str);
+  if (client) str = 'escape = escape || ' + escape.toString() + ';\n' + str;
+
+  try {
+    var fn = new Function('locals, filters, escape, rethrow', str);
+  } catch (err) {
+    if ('SyntaxError' == err.name) {
+      err.message += options.filename
+        ? ' in ' + filename
+        : ' while compiling ejs';
+    }
+    throw err;
+  }
+
+  if (client) return fn;
+
   return function(locals){
-    return fn.call(this, locals, filters, utils.escape);
+    return fn.call(this, locals, filters, escape, rethrow);
   }
 };
 
@@ -318,16 +358,33 @@ exports.renderFile = function(path, options, fn){
 
   options.filename = path;
 
+  var str;
   try {
-    var str = options.cache
-      ? cache[key] || (cache[key] = fs.readFileSync(path, 'utf8'))
-      : fs.readFileSync(path, 'utf8');
-
-    fn(null, exports.render(str, options));
+    str = options.cache
+      ? cache[key] || (cache[key] = read(path, 'utf8'))
+      : read(path, 'utf8');
   } catch (err) {
     fn(err);
+    return;
   }
+  fn(null, exports.render(str, options));
 };
+
+/**
+ * Resolve include `name` relative to `filename`.
+ *
+ * @param {String} name
+ * @param {String} filename
+ * @return {String}
+ * @api private
+ */
+
+function resolveInclude(name, filename) {
+  var path = join(dirname(filename), name);
+  var ext = extname(name);
+  if (!ext) path += '.ejs';
+  return path;
+}
 
 // express support
 
@@ -338,9 +395,12 @@ exports.__express = exports.renderFile;
  */
 
 if (require.extensions) {
-  require.extensions['.ejs'] = function(module, filename) {
-    source = require('fs').readFileSync(filename, 'utf-8');
-    module._compile(compile(source, {}), filename);
+  require.extensions['.ejs'] = function (module, filename) {
+    filename = filename || module.filename;
+    var options = { filename: filename, client: true }
+      , template = fs.readFileSync(filename).toString()
+      , fn = compile(template, options);
+    module._compile('module.exports = ' + fn.toString() + ';', filename);
   };
 } else if (require.registerExtension) {
   require.registerExtension('.ejs', function(src) {
@@ -349,6 +409,33 @@ if (require.extensions) {
 }
 
 }); // module: ejs.js
+
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
 
 require.register("filters.js", function(module, exports, require){
 
@@ -550,32 +637,6 @@ exports.json = function(obj){
   return JSON.stringify(obj);
 };
 }); // module: filters.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&(?!\w+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-};
- 
-}); // module: utils.js
 
  return require("ejs");
 })();
