@@ -4,6 +4,7 @@ ejs = (function(){
 
 function require(p){
     if ('fs' == p) return {};
+    if ('path' == p) return {};
     var path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');
@@ -62,7 +63,6 @@ require.register("ejs.js", function(module, exports, require){
 
 var utils = require('./utils')
   , path = require('path')
-  , basename = path.basename
   , dirname = path.dirname
   , extname = path.extname
   , join = path.join
@@ -436,6 +436,7 @@ exports.escape = function(html){
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
     .replace(/"/g, '&quot;');
 };
  
@@ -443,7 +444,6 @@ exports.escape = function(html){
 }); // module: utils.js
 
 require.register("filters.js", function(module, exports, require){
-
 /*!
  * EJS - Filters
  * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
@@ -564,9 +564,13 @@ exports.join = function(obj, str){
  * Truncate `str` to `len`.
  */
 
-exports.truncate = function(str, len){
+exports.truncate = function(str, len, append){
   str = String(str);
-  return str.substr(0, len);
+  if (str.length > len) {
+    str = str.slice(0, len);
+    if (append) str += append;
+  }
+  return str;
 };
 
 /**
@@ -641,6 +645,7 @@ exports.get = function(obj, prop){
 exports.json = function(obj){
   return JSON.stringify(obj);
 };
+
 }); // module: filters.js
 
  return require("ejs");

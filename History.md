@@ -1,4 +1,11 @@
 
+0.8.5 / 2013-11-21
+==================
+
+ * fix: Escape apostrophe & don't over-match existing entities
+ * fix function name changed by uglify
+ * fixes require, closes #78
+
 0.8.4 / 2013-05-08 
 ==================
 

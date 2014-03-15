@@ -121,6 +121,7 @@ var browser = {
   
   require: function require(p){
     if ('fs' == p) return {};
+    if ('path' == p) return {};
     var path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');

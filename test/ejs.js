@@ -129,9 +129,20 @@ describe('ejs.renderFile(path, options, fn)', function(){
 })
 
 describe('<%=', function(){
-  it('should escape', function(){
+
+  it('should escape &amp;<script>', function(){
     ejs.render('<%= name %>', { name: '&nbsp;<script>' })
       .should.equal('&amp;nbsp;&lt;script&gt;');
+  })
+
+  it("should escape '", function(){
+    ejs.render('<%= name %>', { name: "The Jones's" })
+      .should.equal('The Jones&#39;s');
+  })
+  
+  it("should escape &foo_bar;", function(){
+    ejs.render('<%= name %>', { name: "&foo_bar;" })
+      .should.equal('&amp;foo_bar;');
   })
 })
 
@@ -203,6 +214,21 @@ describe('filters', function(){
   it('should accept arguments', function(){
     ejs.render('<%=: users | map:"name" | join:", " %>', { users: users })
       .should.equal('tobi, loki, jane');
+  })
+
+  it('should truncate string', function(){
+    ejs.render('<%=: word | truncate: 3 %>', { word: 'World' })
+      .should.equal('Wor');
+  })
+
+  it('should append string if string is longer', function(){
+    ejs.render('<%=: word | truncate: 2,"..." %>', { word: 'Testing' })
+      .should.equal('Te...');
+  })
+
+  it('should not append string if string is shorter', function(){
+    ejs.render('<%=: word | truncate: 10,"..." %>', { word: 'Testing' })
+      .should.equal('Testing');
   })
 
   it('should accept arguments containing :', function(){
