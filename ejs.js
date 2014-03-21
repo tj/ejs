@@ -193,8 +193,13 @@ var parse = exports.parse = function(str, options){
           postfix = "; buf.push('";
       }
 
-      var end = str.indexOf(close, i)
-        , js = str.substring(i, end)
+      var end = str.indexOf(close, i);
+
+      if (end < 0){
+        throw new SyntaxError('Could not find matching close tag "' + close + '".');
+      }
+
+      var js = str.substring(i, end)
         , start = i
         , include = null
         , n = 0;
@@ -410,6 +415,34 @@ if (require.extensions) {
 
 }); // module: ejs.js
 
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
+
 require.register("filters.js", function(module, exports, require){
 /*!
  * EJS - Filters
@@ -614,34 +647,6 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
-};
- 
-
-}); // module: utils.js
 
  return require("ejs");
 })();
