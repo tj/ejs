@@ -144,7 +144,7 @@ function rethrow(err, str, filename, lineno){
     + lineno + '\n'
     + context + '\n\n'
     + err.message;
-  
+
   throw err;
 }
 
@@ -175,7 +175,7 @@ var parse = exports.parse = function(str, options){
     var stri = str[i];
     if (str.slice(i, open.length + i) == open) {
       i += open.length
-  
+
       var prefix, postfix, line = (compileDebug ? '__stack.lineno=' : '') + lineno;
       switch (str[i]) {
         case '=':
@@ -196,7 +196,7 @@ var parse = exports.parse = function(str, options){
       var end = str.indexOf(close, i);
 
       if (end < 0){
-        throw new SyntaxError('Could not find matching close tag "' + close + '".');
+        throw new Error('Could not find matching close tag "' + close + '".');
       }
 
       var js = str.substring(i, end)
@@ -264,14 +264,14 @@ var parse = exports.parse = function(str, options){
 var compile = exports.compile = function(str, options){
   options = options || {};
   var escape = options.escape || utils.escape;
-  
+
   var input = JSON.stringify(str)
     , compileDebug = options.compileDebug !== false
     , client = options.client
     , filename = options.filename
         ? JSON.stringify(options.filename)
         : 'undefined';
-  
+
   if (compileDebug) {
     // Adds the fancy stack trace meta info
     str = [
@@ -286,7 +286,7 @@ var compile = exports.compile = function(str, options){
   } else {
     str = exports.parse(str, options);
   }
-  
+
   if (options.debug) console.log(str);
   if (client) str = 'escape = escape || ' + escape.toString() + ';\n' + str;
 
@@ -414,34 +414,6 @@ if (require.extensions) {
 }
 
 }); // module: ejs.js
-
-require.register("utils.js", function(module, exports, require){
-
-/*!
- * EJS
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-exports.escape = function(html){
-  return String(html)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/'/g, '&#39;')
-    .replace(/"/g, '&quot;');
-};
- 
-
-}); // module: utils.js
 
 require.register("filters.js", function(module, exports, require){
 /*!
@@ -647,6 +619,34 @@ exports.json = function(obj){
 };
 
 }); // module: filters.js
+
+require.register("utils.js", function(module, exports, require){
+
+/*!
+ * EJS
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+exports.escape = function(html){
+  return String(html)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;');
+};
+ 
+
+}); // module: utils.js
 
  return require("ejs");
 })();
