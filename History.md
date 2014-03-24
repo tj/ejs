@@ -1,4 +1,9 @@
 
+1.0.0 / 2014-03-24
+==================
+
+ * change: escape & even if it looks like an HTML entity. Don't try to prevent double-escaping.
+
 0.8.6 / 2014-03-21
 ==================
 
