@@ -24,6 +24,14 @@ users.push({ name: 'tobi' });
 users.push({ name: 'loki' });
 users.push({ name: 'jane' });
 
+ejs.renderFile( __dirname+'/'+ 'fixtures/newlines.ejs', {
+    users: users,
+    debug: true,
+}, function( err, html ) {
+    console.log( html);
+});
+return ;
+
 describe('ejs.compile(str, options)', function(){
   it('should compile to a function', function(){
     var fn = ejs.compile('<p>yay</p>');
