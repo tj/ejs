@@ -176,6 +176,13 @@ describe('-%>', function(){
   })
 })
 
+describe('<%%', function(){
+  it('should produce literals', function(){
+    ejs.render('<%%- "foo" %>')
+      .should.equal('<%- "foo" %>');
+  })
+})
+
 describe('single quotes', function(){
   it('should not mess up the constructed function', function(){
     ejs.render(fixture('single-quote.ejs'))
