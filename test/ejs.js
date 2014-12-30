@@ -8,6 +8,20 @@ var ejs = require('..')
   , assert = require('should');
 
 /**
+ * Apparently someone wrote a test depending on a method
+ * not included in the specified version of Should
+ */
+assert.Assertion.add('include', function (param) {
+  if (this.obj.indexOf(param) > -1) {
+  }
+  else {
+    throw new Error('Substring "' + param +
+        '" not found in string "' + this.obj + '"');
+  }
+});
+
+
+/**
  * Load fixture `name`.
  */
 
