@@ -329,3 +329,29 @@ describe('require', function() {
         .should.equal(fixture('menu.html'));
   })
 })
+
+describe('extend and block', function(){
+  it('should extend ejs', function(){
+    var file = 'test/fixtures/extend.ejs';
+    ejs.render(fixture('extend.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend.html'));
+  })
+
+  it('should extend ejs, the content outside the blocks should be ignored', function(){
+    var file = 'test/fixtures/extend-ignored.ejs';
+    ejs.render(fixture('extend-ignored.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend.html'));
+  })
+
+  it('should work when nested', function(){
+    var file = 'test/fixtures/extend-nested.ejs';
+    ejs.render(fixture('extend-nested.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-nested.html'));
+  })
+
+  it('should work with include', function(){
+    var file = 'test/fixtures/extend-include.ejs';
+    ejs.render(fixture('extend-include.ejs'), { filename: file, pets: users })
+      .should.equal(fixture('extend-include.html'));
+  })  
+})
