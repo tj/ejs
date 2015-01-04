@@ -75,6 +75,16 @@ File issues for EJS v2 here: https://github.com/mde/ejs/issues
 </ul>
 ```
 
+  Starting with "/" will drive you to the absolute path.
+
+```
+<ul>
+  <% users.forEach(function(user){ %>
+    <% include /views/user/show %>
+  <% }) %>
+</ul>
+```
+
 ## Custom delimiters
 
 Custom delimiters can also be applied globally:
