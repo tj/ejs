@@ -295,13 +295,6 @@ describe('includes', function(){
       .should.equal(fixture('menu.html'));
   })
 
-  it('should work with a variable path', function(){
-    var file = 'test/fixtures/menu_var.ejs',
-        includePath = 'includes/menu-item';
-    ejs.render(fixture('menu.ejs'), { filename: file, pets: users, varPath:  includePath})
-      .should.equal(fixture('menu.html'));
-  })
-
   it('should include arbitrary files as-is', function(){
     var file = 'test/fixtures/include.css.ejs';
     ejs.render(fixture('include.css.ejs'), { filename: file, pets: users })
