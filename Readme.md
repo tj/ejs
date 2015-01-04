@@ -4,6 +4,14 @@ Embedded JavaScript templates.
 
 [![Build Status](https://travis-ci.org/visionmedia/ejs.png)](https://travis-ci.org/visionmedia/ejs)
 
+- - -
+NOTE: Version 2 of EJS makes some breaking changes with this version (notably,
+removal of the filters feature).  Work on v2 is happening here:
+https://github.com/mde/ejs
+
+File issues for EJS v2 here: https://github.com/mde/ejs/issues
+- - -
+
 ## Installation
 
     $ npm install ejs
