@@ -1,6 +1,7 @@
 ejs = (function(){
 
 // CommonJS require()
+String.prototype.trim || (String.prototype.trim = function(){return this .replace(/^\s\s*/, '').replace(/\s\s*$/, '');});
 
 function require(p){
     if ('fs' == p) return {};
