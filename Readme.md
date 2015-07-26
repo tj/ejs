@@ -37,7 +37,7 @@ File issues for EJS v2 here: https://github.com/mde/ejs/issues
     
 ## Try out a live example now
 
-<a href="https://runnable.com/ejs" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
+<a href="https://runnable.com/ejs" target="_blank"><img src="https://runnable.io/build/images/runnable-logo.svg" style="width:240px;height:45px;"></a>
 
 ## Usage
 
