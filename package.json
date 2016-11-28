@@ -6,7 +6,8 @@
   "keywords": ["template", "engine", "ejs"],
   "devDependencies": {
     "mocha": "*",
-    "should": "*"
+    "should": "*",
+    "jshint": "*"
   },
   "main": "./lib/ejs.js",
   "repository": "git://github.com/visionmedia/ejs.git",
