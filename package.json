@@ -3,7 +3,11 @@
   "description": "Embedded JavaScript templates",
   "version": "1.0.0",
   "author": "TJ Holowaychuk <tj@vision-media.ca>",
-  "keywords": ["template", "engine", "ejs"],
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
   "devDependencies": {
     "mocha": "*",
     "should": "*"
@@ -12,5 +16,8 @@
   "repository": "git://github.com/visionmedia/ejs.git",
   "scripts": {
     "test": "mocha --require should --reporter spec"
+  },
+  "dependencies": {
+    "async": "~0.7.0"
   }
 }
