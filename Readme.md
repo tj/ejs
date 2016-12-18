@@ -54,6 +54,7 @@ File issues for EJS v2 here: https://github.com/mde/ejs/issues
   - `scope`           Function execution context
   - `debug`           Output generated function body
   - `compileDebug`    When `false` no debug instrumentation is compiled
+  - `parsePlus`       Use `buf +=` instead of `buf.push()`
   - `client`          Returns standalone compiled function
   - `open`            Open tag, defaulting to "<%"
   - `close`           Closing tag, defaulting to "%>"
