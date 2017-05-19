@@ -1,0 +1,4 @@
+*.sw[a-z]
+vim/.netrwhist
+test
+examples
