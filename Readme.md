@@ -61,16 +61,16 @@ File issues for EJS v2 here: https://github.com/mde/ejs/issues
 
 ## Includes
 
- Includes are relative to the template with the `include` statement,
+ Includes are relative to the template with the `include()` function,
  for example if you have "./views/users.ejs" and "./views/user/show.ejs"
- you would use `<% include user/show %>`. The included file(s) are literally
+ you would use `<%- include("user/show") %>`. The included file(s) are literally
  included into the template, _no_ IO is performed after compilation, thus
  local variables are available to these included templates.
 
 ```
 <ul>
   <% users.forEach(function(user){ %>
-    <% include user/show %>
+    <%- include ("user/show") %>
   <% }) %>
 </ul>
 ```
@@ -160,10 +160,10 @@ ejs.filters.last = function(obj) {
   simply including a header and footer like so:
 
 ```html
-<% include head %>
+<%- include("head") %>
 <h1>Title</h1>
 <p>My page</p>
-<% include foot %>
+<%- include("foot") %>
 ```
 
 ## client-side support
