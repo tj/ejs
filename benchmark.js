@@ -1,12 +1,12 @@
 
 
-var ejs = require('./lib/ejs'),
+let ejs = require('./lib/ejs'),
     str = '<% if (foo) { %><p><%= foo %></p><% } %>',
     times = 50000;
 
 console.log('rendering ' + times + ' times');
 
-var start = new Date;
+let start = new Date;
 while (times--) {
     ejs.render(str, { cache: true, filename: 'test', locals: { foo: 'bar' }});
 }
