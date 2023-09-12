@@ -3,13 +3,13 @@
  * Module dependencies.
  */
 
-var fs = require('fs');
+let fs = require('fs');
 
 /**
  * Arguments.
  */
 
-var args = process.argv.slice(2)
+let args = process.argv.slice(2)
   , pending = args.length
   , files = {};
 
@@ -18,7 +18,7 @@ console.log('');
 // parse arguments
 
 args.forEach(function(file){
-  var mod = file.replace('lib/', '');
+  let mod = file.replace('lib/', '');
   fs.readFile(file, 'utf8', function(err, js){
     if (err) throw err;
     console.log('  \033[90mcompile : \033[0m\033[36m%s\033[0m', file);
@@ -56,7 +56,7 @@ function parseInheritance(js) {
  */
 
 function parseConditionals(js) {
-  var lines = js.split('\n')
+  let lines = js.split('\n')
     , len = lines.length
     , buffer = true
     , browser = false
@@ -64,7 +64,7 @@ function parseConditionals(js) {
     , line
     , cond;
 
-  for (var i = 0; i < len; ++i) {
+  for (let i = 0; i < len; ++i) {
     line = lines[i];
     if (/^ *\/\/ *if *(node|browser)/gm.exec(line)) {
       cond = RegExp.$1;
@@ -87,7 +87,7 @@ function parseConditionals(js) {
  */
 
 function compile() {
-  var buf = '';
+  let buf = '';
   buf += 'ejs = (function(){\n';
   buf += '\n// CommonJS require()\n\n';
   buf += browser.require + '\n\n';
@@ -96,7 +96,7 @@ function compile() {
   buf += 'require.register = ' + browser.register + ';\n\n';
   buf += 'require.relative = ' + browser.relative + ';\n\n';
   args.forEach(function(file){
-    var js = files[file];
+    let js = files[file];
     file = file.replace('lib/', '');
     buf += '\nrequire.register("' + file + '", function(module, exports, require){\n';
     buf += js;
@@ -113,7 +113,7 @@ function compile() {
 // refactored version of weepy's
 // https://github.com/weepy/brequire/blob/master/browser/brequire.js
 
-var browser = {
+let browser = {
   
   /**
    * Require a module.
@@ -122,7 +122,7 @@ var browser = {
   require: function require(p){
     if ('fs' == p) return {};
     if ('path' == p) return {};
-    var path = require.resolve(p)
+    let path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');
     if (!mod.exports) {
@@ -137,7 +137,7 @@ var browser = {
    */
 
   resolve: function(path){
-    var orig = path
+    let orig = path
       , reg = path + '.js'
       , index = path + '/index.js';
     return require.modules[reg] && reg
@@ -153,12 +153,12 @@ var browser = {
     return function(p){
       if ('.' != p.substr(0, 1)) return require(p);
       
-      var path = parent.split('/')
+      let path = parent.split('/')
         , segs = p.split('/');
       path.pop();
       
-      for (var i = 0; i < segs.length; i++) {
-        var seg = segs[i];
+      for (let i = 0; i < segs.length; i++) {
+        let seg = segs[i];
         if ('..' == seg) path.pop();
         else if ('.' != seg) path.push(seg);
       }
