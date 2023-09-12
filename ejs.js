@@ -5,7 +5,7 @@ ejs = (function(){
 function require(p){
     if ('fs' == p) return {};
     if ('path' == p) return {};
-    var path = require.resolve(p)
+    let path = require.resolve(p)
       , mod = require.modules[path];
     if (!mod) throw new Error('failed to require "' + p + '"');
     if (!mod.exports) {
@@ -18,7 +18,7 @@ function require(p){
 require.modules = {};
 
 require.resolve = function (path){
-    var orig = path
+    let orig = path
       , reg = path + '.js'
       , index = path + '/index.js';
     return require.modules[reg] && reg
@@ -34,12 +34,12 @@ require.relative = function (parent) {
     return function(p){
       if ('.' != p.substr(0, 1)) return require(p);
       
-      var path = parent.split('/')
+      let path = parent.split('/')
         , segs = p.split('/');
       path.pop();
       
-      for (var i = 0; i < segs.length; i++) {
-        var seg = segs[i];
+      for (let i = 0; i < segs.length; i++) {
+        let seg = segs[i];
         if ('..' == seg) path.pop();
         else if ('.' != seg) path.push(seg);
       }
@@ -61,7 +61,7 @@ require.register("ejs.js", function(module, exports, require){
  * Module dependencies.
  */
 
-var utils = require('./utils')
+let utils = require('./utils')
   , path = require('path')
   , dirname = path.dirname
   , extname = path.extname
@@ -75,7 +75,7 @@ var utils = require('./utils')
  * @type Object
  */
 
-var filters = exports.filters = require('./filters');
+let filters = exports.filters = require('./filters');
 
 /**
  * Intermediate js cache.
@@ -83,7 +83,7 @@ var filters = exports.filters = require('./filters');
  * @type Object
  */
 
-var cache = {};
+let cache = {};
 
 /**
  * Clear intermediate js cache.
@@ -105,7 +105,7 @@ exports.clearCache = function(){
 
 function filtered(js) {
   return js.substr(1).split('|').reduce(function(js, filter){
-    var parts = filter.split(':')
+    let parts = filter.split(':')
       , name = parts.shift()
       , args = parts.join(':') || '';
     if (args) args = ', ' + args;
@@ -125,13 +125,13 @@ function filtered(js) {
  */
 
 function rethrow(err, str, filename, lineno){
-  var lines = str.split('\n')
+  let lines = str.split('\n')
     , start = Math.max(lineno - 3, 0)
     , end = Math.min(lines.length, lineno + 3);
 
   // Error context
-  var context = lines.slice(start, end).map(function(line, i){
-    var curr = i + start + 1;
+  let context = lines.slice(start, end).map(function(line, i){
+    let curr = i + start + 1;
     return (curr == lineno ? ' >> ' : '    ')
       + curr
       + '| '
@@ -156,8 +156,8 @@ function rethrow(err, str, filename, lineno){
  * @api public
  */
 
-var parse = exports.parse = function(str, options){
-  var options = options || {}
+let parse = exports.parse = function(str, options){
+  let options = options || {}
     , open = options.open || exports.open || '<%'
     , close = options.close || exports.close || '%>'
     , filename = options.filename
@@ -168,15 +168,15 @@ var parse = exports.parse = function(str, options){
   if (false !== options._with) buf += '\nwith (locals || {}) { (function(){ ';
   buf += '\n buf.push(\'';
 
-  var lineno = 1;
+  let lineno = 1;
 
-  var consumeEOL = false;
-  for (var i = 0, len = str.length; i < len; ++i) {
-    var stri = str[i];
+  let consumeEOL = false;
+  for (let i = 0, len = str.length; i < len; ++i) {
+    let stri = str[i];
     if (str.slice(i, open.length + i) == open) {
       i += open.length
 
-      var prefix, postfix, line = (compileDebug ? '__stack.lineno=' : '') + lineno;
+      let prefix, postfix, line = (compileDebug ? '__stack.lineno=' : '') + lineno;
       switch (str[i]) {
         case '=':
           prefix = "', escape((" + line + ', ';
@@ -193,13 +193,13 @@ var parse = exports.parse = function(str, options){
           postfix = "; buf.push('";
       }
 
-      var end = str.indexOf(close, i);
+      let end = str.indexOf(close, i);
 
       if (end < 0){
         throw new Error('Could not find matching close tag "' + close + '".');
       }
 
-      var js = str.substring(i, end)
+      let js = str.substring(i, end)
         , start = i
         , include = null
         , n = 0;
